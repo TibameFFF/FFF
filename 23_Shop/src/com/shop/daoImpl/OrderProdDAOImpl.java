@@ -1,0 +1,245 @@
+package com.shop.daoImpl;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.shop.dao.OrderProdDAO;
+import com.shop.model.OrderProd;
+import com.shop.model.ProdSpec;
+import com.shop.util.Util;
+
+
+public class OrderProdDAOImpl implements OrderProdDAO{
+
+	@Override
+	public void add(OrderProd orderProd) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		
+		try {
+			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			ps = con.prepareStatement("INSERT INTO shop.order_prod(ord_no, prod_spec_id, hist_prod_name, hist_prod_spec, hist_prod_price, hist_prod_pic, prod_num) VALUES(?, ?, ?, ?,?,?,?)");
+			
+			ps.setInt(1, orderProd.getOrd_no());
+			ps.setInt(2, orderProd.getProd_spec_id());
+			ps.setString(3, orderProd.getHist_prod_name());
+			ps.setString(4, orderProd.getHist_prod_spec());
+			ps.setInt(5, orderProd.getHist_prod_price());
+			ps.setBytes(6, orderProd.getHist_prod_pic());
+			ps.setInt(7, orderProd.getProd_num());
+			
+			ps.execute();
+			
+		} catch (SQLException e) {
+			throw new RuntimeException("A database error occured. "
+					+ e.getMessage());
+		} finally {
+			
+			if(ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if(con != null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+	}
+
+	@Override
+	public void updateComment(OrderProd orderProd) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		
+		try {
+			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			ps = con.prepareStatement("UPDATE shop.order_prod SET eval_star=?, eval_text=? WHERE ord_prod_id=?");
+			
+			ps.setInt(1, orderProd.getEval_star());
+			ps.setString(2, orderProd.getEval_text());
+			ps.setInt(3, orderProd.getOrd_prod_id());
+			
+			ps.execute();
+			
+		} catch (SQLException e) {
+			throw new RuntimeException("A database error occured. "
+					+ e.getMessage());
+		} finally {
+			
+			if(ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if(con != null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+	}
+
+	@Override
+	public List<OrderProd> findByOrdNo(int ordNo) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		List<OrderProd> list = new ArrayList<OrderProd>();
+		ResultSet rs = null;
+		
+		try {
+			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			ps = con.prepareStatement("SELECT * FROM shop.order_prod WHERE ord_no=?");
+			ps.setInt(1, ordNo);
+			
+			rs = ps.executeQuery();
+			
+			while(rs.next()) {
+				OrderProd orderProd = new OrderProd();
+				
+				orderProd.setEval_star(rs.getInt("eval_star"));
+				orderProd.setEval_text(rs.getString("eval_text"));
+				orderProd.setHist_prod_name(rs.getString("hist_prod_name"));
+//				orderProd.setHist_prod_pic(rs.getBytes("hist_prod_pic"));
+				orderProd.setHist_prod_price(rs.getInt("hist_prod_price"));
+				orderProd.setHist_prod_spec(rs.getString("hist_prod_spec"));
+				orderProd.setOrd_no(rs.getInt("ord_no"));
+				orderProd.setOrd_prod_id(rs.getInt("ord_prod_id"));
+				orderProd.setProd_num(rs.getInt("prod_num"));
+				orderProd.setProd_spec_id(rs.getInt("prod_spec_id"));
+				orderProd.setRe_ex_detail(rs.getString("re_ex_detail"));
+				orderProd.setRe_ex_num(rs.getInt("re_ex_num"));
+				orderProd.setRe_ex_pic(rs.getBytes("re_ex_pic"));
+				orderProd.setRe_ex_price(rs.getInt("re_ex_price"));
+				orderProd.setRe_ex_reason(rs.getString("re_ex_reason"));
+				
+			
+				
+				list.add(orderProd);
+			}
+			
+			
+			
+		} catch (SQLException e) {
+			throw new RuntimeException("A database error occured. "
+					+ e.getMessage());
+		} finally {
+			
+			if(rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if(ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if(con != null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public List<OrderProd> findByProdSpec(int specID) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		List<OrderProd> list = new ArrayList<OrderProd>();
+		ResultSet rs = null;
+		
+		try {
+			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			ps = con.prepareStatement("SELECT * FROM shop.order_prod WHERE prod_spec_id=?");
+			ps.setInt(1, specID);
+			
+			rs = ps.executeQuery();
+			
+			while(rs.next()) {
+				OrderProd orderProd = new OrderProd();
+				
+				orderProd.setEval_star(rs.getInt("eval_star"));
+				orderProd.setEval_text(rs.getString("eval_text"));
+				orderProd.setHist_prod_name(rs.getString("hist_prod_name"));
+				orderProd.setHist_prod_pic(rs.getBytes("hist_prod_pic"));
+				orderProd.setHist_prod_price(rs.getInt("hist_prod_price"));
+				orderProd.setHist_prod_spec(rs.getString("hist_prod_spec"));
+				orderProd.setOrd_no(rs.getInt("ord_no"));
+				orderProd.setOrd_prod_id(rs.getInt("ord_prod_id"));
+				orderProd.setProd_num(rs.getInt("prod_num"));
+				orderProd.setProd_spec_id(rs.getInt("prod_spec_id"));
+				orderProd.setRe_ex_detail(rs.getString("re_ex_detail"));
+				orderProd.setRe_ex_num(rs.getInt("re_ex_num"));
+				orderProd.setRe_ex_pic(rs.getBytes("re_ex_pic"));
+				orderProd.setRe_ex_price(rs.getInt("re_ex_price"));
+				orderProd.setRe_ex_reason(rs.getString("re_ex_reason"));
+				
+			
+				
+				list.add(orderProd);
+			}
+			
+			
+			
+		} catch (SQLException e) {
+			throw new RuntimeException("A database error occured. "
+					+ e.getMessage());
+		} finally {
+			
+			if(rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if(ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if(con != null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return list;
+	}
+
+}
