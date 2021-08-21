@@ -1,0 +1,324 @@
+* {
+  //套用整個CSS
+  margin: 0; /* 條整位置會用到  外框限  */ /* 全部歸零就不會有系統預設的問題，方便我們自己調整 */
+  padding: 0; /* 內邊距*/
+  box-sizing: border-box; /*  */
+  font-weight: normal; /* 字體粗細預設歸零*/
+}
+
+body {
+  position: relative;
+  width: 100vw;
+  background-color: rgb(107, 139, 178);
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    div#logo {
+      //.呼叫CLASS | #呼叫id
+      margin: 0 1rem;
+      img {
+        width: 100px;
+        height: 100px;
+      }
+    }
+    div.navRight {
+      width: 90vw;
+      display: flex; /*display 不會被繼承*/
+      justify-content: space-between;
+      div#navBar {
+        nav {
+          ul {
+            display: flex;
+            list-style-type: none;
+            li {
+              font-size: 1.5rem; /*PX絕對單位   REM預設字體大小*/
+              margin: 0.5rem;
+              a {
+                text-decoration: none; /*消除預設顏色*/
+                color: rgb(255, 255, 255);
+              }
+            }
+          }
+        }
+      }
+
+      div#iconBox {
+        display: flex;
+        align-items: center;
+
+        a {
+          // transform: translateX(220px) translateY(-15px);
+          text-decoration: none;
+          margin: 0 1rem;
+        }
+      }
+    }
+  }
+
+  // main settting
+  main {
+    padding-bottom: 10vh;
+    article {
+      //代表只要寫在裡面的東西 各自都是獨立的
+      display: flex; //創造容器
+      flex-direction: column; //預設是ROW
+      align-items: center;
+      div#title {
+        width: 100%;
+        background-color: rgb(183, 198, 219);
+        padding: 0.75rem 3rem;
+
+        display: flex;
+        align-items: center;
+        h1 {
+          font-size: 1.5rem;
+          color: rgb(107, 139, 178);
+        }
+        form {
+          input {
+            border-radius: 5px;
+            border: 1px solid black;
+            padding: 0.1rem 0.2rem;
+            margin-left: 1rem;
+            font-size: 1.25rem;
+          }
+        }
+      }
+      div.content {
+        //. = CLASS
+        display: flex; //創造容器
+        flex-direction: column; //預設是ROW
+        align-items: center;
+        transform: translateY(-30px);
+        padding-bottom: 10vh;
+        div.userPic {
+          img {
+            width: 250px;
+            border-radius: 100%; //便圓
+          }
+        }
+        div.userName {
+          h2 {
+            font-size: 1.5rem;
+            font-weight: 400;
+          }
+        }
+
+        div.personality {
+          background-color: white;
+          width: 30vw;
+
+          //height: 10vw;
+          border-radius: 1rem;
+          position: relative; //相對位置指定  上
+          padding: 1rem;
+          button {
+            border: none;
+            border-radius: 50%;
+            background-color: rgb(238, 136, 136);
+            font-size: 1.2rem;
+            font-weight: 600; //字體的粗細
+            width: 1.75rem;
+            height: 1.75rem;
+            cursor: pointer;
+            position: absolute; //絕對位置指定 下找上
+            top: 2px;
+            right: 1px;
+          }
+
+          table {
+            //border: 2px solid black;
+            margin: 0 auto;
+            tr {
+              text-align: center;
+              //   padding: 0.5rem;
+              td {
+                padding: 0.75rem 6px;
+                font-size: 1.25rem;
+                color: rgb(107, 139, 178);
+                font-weight: bold;
+              }
+            }
+          }
+        }
+        div.ox {
+          width: 50%;
+          display: flex;
+          justify-content: space-between;
+          button {
+            border: none;
+            border-radius: 0.2rem; //圓角
+            background: rgb(246, 250, 255);
+            width: 8rem;
+            color: rgb(33, 100, 141);
+            cursor: pointer; //改變游標便手指
+            padding: 0.2rem 0; //字跟外框線的距離 (內拒)
+            margin: 0.1rem 0.1rem; //字的內框線
+          }
+          #wannaFriend:active {
+            transform: scale(2);
+          }
+        }
+      }
+      div#singleChat {
+        // padding: 0.5rem 4rem 1rem 1rem;
+        padding: 1rem 3rem;
+        // align-items: center;
+        // justify-content: space-evenly;
+        width: 90%;
+        display: flex; //設定容器  預設會是橫的
+        div.friendList {
+          padding: 0.5rem;
+          margin-right: 2rem;
+          background-color: white;
+          width: 25vw;
+          height: 65vh;
+          border-radius: 0.5rem;
+          div.friendCard {
+            display: flex;
+            img {
+              width: 100px;
+              height: 100px;
+              border-radius: 50%;
+            }
+            div.friendCardPreview {
+              position: relative; //相對位置
+              width: 100%;
+              padding: 1rem;
+              div.friendName {
+                padding: 0.2rem 0;
+                p {
+                  font-size: 1.5rem;
+                }
+              }
+              div.string {
+                p {
+                  font-size: 1rem;
+                }
+              }
+              div.time {
+                position: absolute; //絕對位置
+                top: 27px;
+                right: 10px;
+                p {
+                  font: size 0.5rem;
+                }
+              }
+            }
+          }
+        }
+        div.chatBox {
+          background-color: rgb(235, 234, 234);
+          width: 60vw;
+          height: 65vh;
+          border-radius: 0.5rem;
+          padding: 0.5rem;
+          position: relative;
+          div.receive {
+            img {
+              width: 80px;
+              height: 80px;
+              border-radius: 50%;
+            }
+          }
+          div.send {
+            // img {
+            //   width: 80px;
+            //   height: 80px;
+            //   border-radius: 50%;
+            // }
+            P {
+              font-size: 1rem;
+            }
+          }
+          div#typeBar {
+            position: absolute;
+            bottom: 3px;
+            left: 0;
+            display: flex;
+            justify-content: space-between;
+            background-color: rgb(161, 194, 231);
+            border-radius: 5rem;
+            width: 100%;
+            padding: 0.1rem 0.3rem;
+            // img {
+            //   width: 40px;
+            //   height: 40px;
+            //   border-radius: 50%;
+            // }
+            button.upLoadButton {
+              border: none;
+              background: none;
+              // border-radius: 50%;
+              color: rgb(223, 223, 223);
+              font-size: 2.25rem;
+              cursor: pointer; //變更滑鼠游標
+              margin: 0rem 0.35rem;
+            }
+            div#typeBarRight {
+              display: flex;
+              align-items: center;
+
+              form {
+                input#message {
+                  border: none;
+                  border-radius: 3px;
+                  padding: 0.25rem 0.1rem;
+                  width: 45vw;
+                }
+              }
+              button.sticker,
+              button.sendMessage {
+                border-radius: 5px;
+                background-color: rgb(111, 155, 202);
+                border: 1px solid rgb(102, 123, 148);
+                color: blanchedalmond;
+                padding: 0.2rem 0.5rem;
+                margin: 0 0.25rem;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  footer {
+    width: 100%;
+    min-height: 10vh;
+    display: flex; //設定容器  預設會是橫的
+    flex-direction: column; //垂直排列
+    align-items: center; //置中
+    background: rgb(107, 139, 178);
+    position: absolute; //?
+    bottom: 0;
+    // padding-top: -10vh;
+
+    div.bottomLine {
+      width: 100%;
+      border: 1px solid rgb(33, 100, 141);
+    }
+    div.footerUp {
+      width: 60%;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly; //  讓單字平均分配間距
+      padding: 1rem;
+      a {
+        text-decoration: none; //  沒使用這行 字就會有底線
+        color: rgb(246, 250, 255);
+        font-size: 1.25rem;
+      }
+      p {
+        font-size: 1.25rem;
+        color: rgb(246, 250, 255);
+      }
+    }
+    div.footerDown {
+      P {
+        font-size: 1.25rem;
+        color: rgb(183, 198, 219);
+      }
+    }
+  }
+}
