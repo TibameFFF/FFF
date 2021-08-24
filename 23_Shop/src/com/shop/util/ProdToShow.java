@@ -1,18 +1,38 @@
 package com.shop.util;
 
-public class ProdToShow {
+import java.io.Serializable;
+
+public class ProdToShow implements Serializable{
+	private static final long serialVersionUID = 1L;
 	@Override
 	public String toString() {
 		return "ProdToShow [prod_id=" + prod_id + ", prod_name=" + prod_name + ", price=" + price + ", img1=" + img1
-				+ ", img2=" + img2 + ", sale=" + sale + ", star=" + star + "]";
+				+ ", img2=" + img2 + ", sale=" + sale + ", star=" + star + ", favProd=" + favProd + "]";
 	}
-	private Integer prod_id;
-	private String prod_name;
-	private Integer price;
-	private String img1;
-	private String img2;
-	private Integer sale;
-	private Double star;
+	private Integer prod_id; //get
+	private String prod_name; //get
+	private Integer price; //get
+	private String img1; //catch
+	private String img2; //catch
+	private Integer sale; //catch
+	private Double star; //catch
+	private Boolean favProd;
+	private Byte status;
+	
+	
+	
+	public Byte getStatus() {
+		return status;
+	}
+	public void setStatus(Byte status) {
+		this.status = status;
+	}
+	public Boolean getFavProd() {
+		return favProd;
+	}
+	public void setFavProd(Boolean favProd) {
+		this.favProd = favProd;
+	}
 	public Integer getProd_id() {
 		return prod_id;
 	}

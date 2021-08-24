@@ -3,6 +3,8 @@ package com.shop.model;
 import java.io.Serializable;
 
 public class ShopCart implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public String toString() {
 		return "ShopCart [cart_id=" + cart_id + ", prod_spec_id=" + prod_spec_id + ", user_id=" + user_id

@@ -1,9 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
+
+  update_preview_cart();
   ////////////////////商品小卡設定//////////////////////////////
 
   //商品preview
   $(document).on("click", "div.preview", function (e) {
-    // console.log($(this).attr("data-prod"));
+//    console.log($(this).attr("data-prod"));
 
     let obj = {
       type: "get_spec",
@@ -50,18 +52,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
         //數量歸回1
         $("input[name='prod_num']").val(1);
-        // $('.slider-prod-for').slick('unslick');
-        // $('.slider-prod-nav').slick('unslick');
         $("div.preview_prod_bg").show();
       }
     });
 
   });
 
+  //關閉商品preview
   $("div.exit").on("click", function () {
     $("div.preview_prod_bg").hide();
   });
 
+  //商品換價格
   $("select.index_spec").on("change", function(){
     let price = parseInt($(this).find("option:selected").attr("data-price"));
     $("h2#prod_price").text(`$`+ price.toLocaleString());
@@ -74,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
       let second_img = $(this).find("img").attr("data-img2");
       $(this)
         .find("img")
-        .stop()
+        .stop(true, false)
         .animate({ opacity: 0.5 }, 200, function () {
           $(this).attr("src", second_img);
         })
@@ -91,7 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
       let first_img = $(this).find("img").attr("data-img1");
       $(this)
         .find("img")
-        .stop()
+        .stop(true, false)
         .animate({ opacity: 0.5 }, 200, function () {
           $(this).attr("src", first_img);
         })
@@ -99,18 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  //////////////////首頁////////////////////////////
 
-  //RWD篩選跳出
-  $("button.filter").on("click", function () {
-    $("aside").slideToggle();
-  });
-
-  $("article.explanation h2").on("click", function () {
-    $(this).next().slideToggle();
-  });
-
-  add_heart_btn();
 
   //////////////商品詳情///////////////////////////
 
@@ -136,6 +127,34 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   ///////////////////每筆訂單頁面///////////////////////
+  //按取消訂單 btn_order_cancel
+  $(".btn_order_cancel").on("click", function () {
+    $("div.order_popup").show();
+  })
+  
+  $("button.comfirm_cancel").on('click', function(){
+
+    let obj={
+      id: $(this).attr("data-id")
+    }
+    $.ajax({
+      url: "http://localhost:8081/FFF/CancelOrderServlet",           // 資料請求的網址
+      type: "GET",                  // GET | POST | PUT | DELETE | PATCH
+      data: obj,               // 傳送資料到指定的 url
+      dataType: "text",             // 預期會接收到回傳資料的格式： json | xml | html
+      success: function(data){      // request 成功取得回應後執行
+        console.log(data);
+        $("div.order_popup div.confirm_jump").html("<p>成功取消!<p>");
+
+        setTimeout(function () {
+          location.reload();
+        }, 1000);
+      }
+    });
+    
+     
+  });
+
 
   // 客服區塊彈跳
   $(".btn_support").on("click", function () {
@@ -176,7 +195,6 @@ document.addEventListener("DOMContentLoaded", function () {
       .addEventListener("click", function () {
         document.getElementsByClassName("confirm_jump_bg")[0].style.display =
           "block";
-        console.log(document.getElementsByClassName("confirm_jump_bg")[0]);
       });
   }
 
@@ -191,7 +209,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // 產生預覽圖
   $("input.pic").on("change", function (e) {
     // console.log(this.files);
-    console.log(e.target);
     let pic_preview = e.target.parentNode.nextSibling.nextSibling;
     pic_preview.innerHTML =
       '<div class="spin"><i class="fas fa-spinner fa-pulse"></i></div>';
@@ -241,15 +258,17 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-//商品收藏按紐-商品詳細頁面未完成!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//商品收藏按紐-商品詳細頁面
 $("button#heart").on("click", function () {
+  let prod_id = $(this).attr("data-id");
   if ($(this).children().hasClass("fas")) {
     $(this).children().addClass("far");
     $(this).children().removeClass("fas");
+
+    
     let snedData = {
       type: "remove",
-      userid: 1,
-      prodid: prodid,
+      prodid: prod_id,
     };
 
     $.ajax({
@@ -262,12 +281,11 @@ $("button#heart").on("click", function () {
       },
     });
   } else {
-    $(this).children().addClass("fas");
-    $(this).children().removeClass("far");
+    
     let snedData = {
       type: "add",
       userid: 1,
-      prodid: prodid,
+      prodid: prod_id,
     };
     $.ajax({
       url: "http://localhost:8081/FFF/FavProdServlet",
@@ -275,6 +293,14 @@ $("button#heart").on("click", function () {
       data: snedData,
       dataType: "text",
       success: function (data) {
+    	  if(data=="未登入") {
+    		  $("div.add_to_cart_alert").text("請先登入!");
+    		  $("div.add_to_cart_alert").stop(true, false).fadeIn();
+              $("div.add_to_cart_alert").delay(2000).fadeOut();
+    	  } else{
+    		  $(this).children().addClass("fas");
+    		  $(this).children().removeClass("far");
+    	  }
         console.log(data);
       },
     });
@@ -284,10 +310,12 @@ $("button#heart").on("click", function () {
 // 商品收藏案紐-商品瀏覽頁面
 function add_heart_btn(e) {
   let heart = document.getElementsByClassName("heart_btn");
-  for (let i = 1; i < heart.length; i++) {
+  for (let i = 0; i < heart.length; i++) {
     heart[i].addEventListener("click", function (e) {
+      e.stopImmediatePropagation();
       let fav_btn = e.target;
-      let prodid = $(fav_btn).next().next().attr("href").slice(1);
+      let index=$(fav_btn).next().next().attr("href").lastIndexOf("=");
+      let prodid = $(fav_btn).next().next().attr("href").substring(index+1);
       //移除收藏
       if (fav_btn.classList.contains("fas")) {
         fav_btn.classList.add("far");
@@ -300,7 +328,6 @@ function add_heart_btn(e) {
 
         let snedData = {
           type: "remove",
-          userid: 1,
           prodid: prodid,
         };
 
@@ -310,18 +337,12 @@ function add_heart_btn(e) {
           data: snedData,
           dataType: "text",
           success: function (data) {
+        	 
             console.log(data);
           },
         });
-      } else {
-        //加入收藏
-        fav_btn.classList.add("fas");
-        fav_btn.classList.remove("far");
-        fav_btn.nextSibling.nextSibling.textContent = "已加入收藏 ！";
-
-        setTimeout(function () {
-          fav_btn.nextSibling.nextSibling.textContent = "取消收藏";
-        }, 2000);
+      } else { //加入收藏
+        
 
         let snedData = {
           type: "add",
@@ -335,12 +356,73 @@ function add_heart_btn(e) {
           data: snedData,
           dataType: "text",
           success: function (data) {
+        	  if(data == "未登入"){
+        		  fav_btn.nextSibling.nextSibling.textContent = "請先登入 ！";
+
+                  setTimeout(function () {
+                    fav_btn.nextSibling.nextSibling.textContent = "加入收藏";
+                  }, 2000);
+        		  
+        		 
+        	  }else{
+        		  fav_btn.classList.add("fas");
+                  fav_btn.classList.remove("far");
+                  fav_btn.nextSibling.nextSibling.textContent = "已加入收藏 ！";
+
+                  setTimeout(function () {
+                    fav_btn.nextSibling.nextSibling.textContent = "取消收藏";
+                  }, 2000);
+            	  
+        	  }
+        	  
             console.log(data);
           },
         });
       }
     });
   }
+
+// 加入購物車
+$("button#addCart").on("click", function (e) {
+  
+  e.stopImmediatePropagation();
+  let spec = $("select.index_spec option:selected").val();
+  let num = $("input[name='prod_num']").val();
+  let obj = {
+    type: "add",
+    specid: spec,
+    num: num,
+  };
+  $.ajax({
+    url: "http://localhost:8081/FFF/ProdToCartServlet",
+    type: "GET",
+    dataType: "text",
+    data: obj,
+    success: function (data) {
+      console.log(data);
+      
+      if(data=="未登入"){
+    	  $("div.add_to_cart_alert").text("請先登入!");
+        console.log("XXX");
+      } else{
+    	  $("div.add_to_cart_alert").text("成功加入購物車!");
+    	  update_preview_cart();
+      }
+      
+      $("div.add_to_cart_alert").fadeIn();
+      $("div.add_to_cart_alert").delay(2000).fadeOut();
+      
+      
+      
+    },
+  });
+});
+
+
+
+
+
+
 }
 
 //產生星數字串
@@ -359,4 +441,36 @@ function star_rating_str_reg(star_rating) {
       star_rate += `<i class="far fa-star fa-xs" data-star='${i++}'"></i> `;
   }
   return star_rate;
+}
+
+
+
+//購物說明頁面
+$("article.explanation h2").on("click", function () {
+  $(this).next().slideToggle();
+});
+
+function update_preview_cart(){
+  $.ajax({
+    url: "http://localhost:8081/FFF/HeaderShowCartServlet", 
+    type: "GET",                 
+    dataType: "json",             
+    success: function(data){
+      if(data.length !=0){
+        let str = '<a class="cart" href="/FFF/ShowCartServlet"><button class="cart"><i class="fas fa-shopping-cart"></i>購物車</button></a>';
+        str += '<div class="cart_preview">'+'<div class="info row align-items-center">購物車預覽 </div>';
+  
+        for(let i=0; i<data.length; i++){
+          str+=`<div class="row align-items-center justify-content-around">
+                    <img class="col-3" src="${data[i]["img1"]}" alt=""/>
+                    <p class="col-6">${data[i]["prod_name"]}</p>
+                    <p class="col-3">$${data[i]["price"]}</p>
+                </div> `;
+        }
+        str+="</div>";
+        $("div.cart_preview_div").html(str);
+      }
+
+    }
+  });
 }

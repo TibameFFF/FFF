@@ -12,10 +12,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>訂單評價</title>
+     <link rel="stylesheet" href="<%= request.getContextPath() %>/Shop/vendors/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css"
         integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
-    <link rel="stylesheet" href="style/style.css">
-    <link rel="stylesheet" href="style/order.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/Shop/style/style.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/Shop/style/order.css">
 </head>
 
 <jsp:useBean id="orderDAO" class="com.shop.service.OrderService"/>
@@ -30,7 +31,8 @@
 %>
 
 <body>
-
+	<jsp:include page="pieces/header.jsp"></jsp:include> <!-- header -->
+    <jsp:include page="pieces/search_bar.jsp"></jsp:include> <!-- search_bar -->
     <form method="post" action="/FFF/MakeCommentServlet" enctype="multipart/form-data" >
         <!------------- main page --------------->
         <main>
@@ -126,8 +128,9 @@
 
     </form>
     <script src="vendors/jquery-3.6.0.min.js"></script>
-
+	<script src="vendors/bootstrap.bundle.min.js"></script>
     <script src="js/index.js"></script>
+    
 </body>
 
 </html>

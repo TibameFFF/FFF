@@ -1,5 +1,7 @@
 package com.shop.service;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 import com.shop.dao.OrderProdDAO;
@@ -13,7 +15,7 @@ public class OrderProdService {
 		dao = new OrderProdDAOImpl();
 	}
 	
-	public OrderProd addOrderProd(int ord_no, int prod_spec_id, String hist_prod_name, String hist_prod_spec, int hist_prod_price, byte[] hist_prod_pic, int prod_num) {
+	public OrderProd addOrderProd(Connection connection, int ord_no, int prod_spec_id, String hist_prod_name, String hist_prod_spec, int hist_prod_price, byte[] hist_prod_pic, int prod_num) throws SQLException {
 		OrderProd orderProd = new OrderProd();
 		orderProd.setOrd_no(ord_no);
 		orderProd.setProd_spec_id(prod_spec_id);
@@ -23,7 +25,7 @@ public class OrderProdService {
 		orderProd.setHist_prod_pic(hist_prod_pic);
 		orderProd.setProd_num(prod_num);
 		
-		dao.add(orderProd);
+		dao.add(connection, orderProd);
 		
 		return orderProd;
 	};

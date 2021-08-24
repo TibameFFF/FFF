@@ -9,4 +9,5 @@ public interface ProdPicsDAO {
 	void update(ProdPics prodPics);
 	void delete(int id);
 	List<ProdPics> findByProdID(int id);
+	List<ProdPics> findByProdIDForOrder(int id);
 }

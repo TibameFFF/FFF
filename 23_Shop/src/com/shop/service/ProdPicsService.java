@@ -40,4 +40,8 @@ public class ProdPicsService {
 	public List<ProdPics> getAllProdPicByProdID(int id){
 		return dao.findByProdID(id);
 	};
+	
+	public List<ProdPics> getAllProdPicByProdIDForOrder(int id){
+		return dao.findByProdIDForOrder(id);
+	};
 }

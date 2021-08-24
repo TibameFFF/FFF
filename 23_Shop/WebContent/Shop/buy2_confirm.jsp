@@ -28,6 +28,9 @@
 
 
 <body class="container-fluid">
+
+	<jsp:include page="pieces/header.jsp"></jsp:include> <!-- header -->
+    <jsp:include page="pieces/search_bar.jsp"></jsp:include> <!-- search_bar -->
 <%
 	HashMap buyList = (HashMap)request.getAttribute("buyList");
 	Set specList = buyList.keySet();
@@ -65,7 +68,7 @@
     <hr>
 
     <!-- 付款和地址內容 -->
-    <form action="<%= request.getContextPath() %>/MakeOrderServlet">
+    <form method="POST" action="<%= request.getContextPath() %>/MakeOrderServlet">
         <section class="main_part">
             <h1>資訊確認</h1>
             <hr>
@@ -177,6 +180,7 @@
     </form>
 
     <script src="<%= request.getContextPath() %>/Shop/vendors/jquery-3.6.0.min.js"></script>
+    <script src="<%= request.getContextPath() %>/Shop/vendors/bootstrap.bundle.min.js"></script>
     <script src="<%= request.getContextPath() %>/Shop/js/index.js"></script>
     <script src="<%= request.getContextPath() %>/Shop/vendors/jquery.twzipcode.js"></script>
     <script>
@@ -230,10 +234,6 @@
             $("span#price_total").text((ship_price+original_price).toLocaleString());
         })
         
-// 		window.onpopstate = function(event) {
-//             alert("不能重新載入哦!重導到商品首頁");
-<%--             location.href = '<%= request.getContextPath()%>/Shop/index.html'; --%>
-//         };
     </script>
 
 </body>

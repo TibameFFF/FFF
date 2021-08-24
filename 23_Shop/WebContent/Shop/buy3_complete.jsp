@@ -15,8 +15,18 @@
 
 
 </head>
+<% 
+	String id = request.getParameter("id"); 
+	if (id != null ){
+		pageContext.setAttribute("id", id);
+	}
+
+
+%>
+
 
 <body>
+	<jsp:include page="pieces/header.jsp"></jsp:include> <!-- header -->
     <jsp:include page="pieces/search_bar.jsp"></jsp:include> <!-- search_bar -->
     
     <!-- 購物流程圖示 -->
@@ -55,7 +65,7 @@
             <h1><i class="far fa-check-circle"></i>訂購完成!</h1>
             <hr>
             <p>感謝您的購買!</p>
-            <p>訂單編號: O${orderID}</p>
+            <p>訂單編號: O${orderID}${id}</p>
             <p>將盡快配送您的商品，如有問題請聯繫客服。</p>
         </section>
 
@@ -65,13 +75,12 @@
         </section>
     </main>
 
-<!--     <script> -->
-<%--         history.pushState("", "購物成功!", "<%= request.getContextPath()%>/Shop/index.html"); --%>
-//         window.onpopstate = function(event) {
-//             alert("不能重新載入哦!重導到商品首頁");
-<%--             location.href = '<%= request.getContextPath()%>/Shop/index.html'; --%>
-//         };
-<!--     </script> -->
+    <script>
+        history.pushState(null, null, "<%= request.getContextPath()%>/Shop/buy3_complete.jsp?id=${orderID}${id}");
+         
+         window.addEventListener('popstate', function(){history.forward();});
+    </script>
+	    <script src="<%= request.getContextPath() %>/Shop/vendors/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

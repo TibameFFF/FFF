@@ -15,14 +15,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.shop.daoImpl.ProdPicsDAOImpl;
 import com.shop.daoImpl.ProdSpecDAOImpl;
+import com.shop.model.FavProd;
 import com.shop.model.Prod;
 import com.shop.model.ProdPics;
 import com.shop.model.ProdSpec;
-import com.shop.model.ProdStarSaleView;
+import com.shop.service.FavProdService;
 import com.shop.service.ProdService;
+import com.shop.util.ProdStarSaleView;
 import com.shop.util.ProdStarSaleViewDAO;
 import com.shop.util.ProdStarSaleViewDAOImpl;
 import com.shop.util.ProdToShow;
+import com.shop.util.ProdToShowDAOImpl;
 
 @WebServlet("/ProductFilterServlet")
 public class ProductFilterServlet extends HttpServlet {
@@ -30,12 +33,15 @@ public class ProductFilterServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		// http://localhost:8081/FFF/ProductFilterServlet?type=type&num=1
+		
+		int idGetFromSession = 1;
+		
+		
 		req.setCharacterEncoding("UTF-8");
-
 		String search = req.getParameter("search");
 		if (search != null) {
-			List<Prod> prodList;
-			ProdService prodService = new ProdService();
+			List<ProdToShow> prodList;
+			ProdToShowDAOImpl prodToShowService = new ProdToShowDAOImpl();
 			List<Integer> price = new ArrayList<Integer>();
 			List<Integer> typeList = new ArrayList<Integer>();
 			List<Integer> ship = new ArrayList<Integer>();
@@ -81,17 +87,16 @@ public class ProductFilterServlet extends HttpServlet {
 					}
 				}
 
-				prodList = prodService.getAllbyFilter(price, typeList, ship, search);
+				prodList = prodToShowService.filterByPriceTypeShip(price, typeList, ship, search);
 
 			} else {
 
-				prodList = prodService.getAllBySearch(search);
+				prodList = prodToShowService.getBySearch(search);
 			}
 
 			// 星數篩選
 			String starSearch = req.getParameter("star");
 			if (starSearch != null) {
-				System.out.println("list size:" + prodList.size());
 				int searchStar = Integer.parseInt(starSearch);
 				ProdStarSaleViewDAO prodStarSaleView = new ProdStarSaleViewDAOImpl();
 
@@ -111,55 +116,39 @@ public class ProductFilterServlet extends HttpServlet {
 				}
 
 			}
+			
+			//取得會員收藏商品
+			FavProdService favProdService = new FavProdService();
+			List<FavProd> favProdList = favProdService.getFavProdByUserId(idGetFromSession);
+			List<Integer> favProdIdList = new ArrayList<Integer>();
 
-			// 設定要傳送的資料
-			List<ProdToShow> sendList = new ArrayList<ProdToShow>();
+			for(FavProd favProd: favProdList) {
+				favProdIdList.add(favProd.getProd_id());
+			}
+			
 			for (int i = 0; i < prodList.size(); i++) {
-				ProdToShow prod = new ProdToShow();
 				int prodID = prodList.get(i).getProd_id();
-				prod.setProd_id(prodID);
 
-				// 取得商品名稱
-				prod.setProd_name(prodList.get(i).getProd_name());
-
-				// 取得商品價格
-				ProdSpecDAOImpl spec = new ProdSpecDAOImpl();
-				List<ProdSpec> specList = spec.findByProdID(prodID);
-				prod.setPrice(specList.get(0).getProd_price());
-
+				
 				// 取得商品圖片
 				ProdPicsDAOImpl pic = new ProdPicsDAOImpl();
 				List<ProdPics> picList = pic.findByProdID(prodID);
-				prod.setImg1("FFF/ProdImage?id=" + picList.get(0).getProd_pic_id());
+				prodList.get(i).setImg1("FFF/ProdImage?id=" + picList.get(0).getProd_pic_id());
 				if (picList.size() > 1)
-					prod.setImg2("FFF/ProdImage?id=" + picList.get(1).getProd_pic_id());
+					prodList.get(i).setImg2("FFF/ProdImage?id=" + picList.get(1).getProd_pic_id());
 
 				// 取得商品星數和銷售量
 				ProdStarSaleViewDAOImpl view = new ProdStarSaleViewDAOImpl();
-				List<ProdStarSaleView> viewList = view.findByProdID(prodID);
+				prodList.get(i).setStar(view.getStarRate(prodID));
+				prodList.get(i).setSale(view.getNumSale(prodID));
+				
+				prodList.get(i).setFavProd(false);
+				//設定是否收藏
+				if(favProdIdList.contains(prodID))
+					prodList.get(i).setFavProd(true);
+				
 
-				if (viewList.size() != 0) {
-					int sale_num = 0;
-					int star_count = 0;
-					int star_total = 0;
-					for (ProdStarSaleView ob : viewList) {
-						sale_num += ob.getProd_num();
 
-						if (ob.getEval_star() != 0) {
-							star_count++;
-							star_total += ob.getEval_star();
-						}
-					}
-
-					if (star_count != 0) {
-						double starAverage = star_total / star_count;
-						prod.setStar(starAverage);
-
-					}
-					prod.setSale(sale_num);
-				}
-
-				sendList.add(prod);
 			}
 
 
@@ -169,16 +158,16 @@ public class ProductFilterServlet extends HttpServlet {
 
 				switch (sortNum) {
 				case 1://銷售排行 
-					Collections.sort(sendList, new SaleDesc());
+					Collections.sort(prodList, new SaleDesc());
 					break;
 				case 2://評價 
-					Collections.sort(sendList, new CommentDesc());
+					Collections.sort(prodList, new CommentDesc());
 					break;
 				case 3://價格:高到低
-					Collections.sort(sendList, new SortPriceDesc());
+					Collections.sort(prodList, new SortPriceDesc());
 					break;
 				case 4://價格:低到高
-					Collections.sort(sendList, new SortPriceAsc());
+					Collections.sort(prodList, new SortPriceAsc());
 					break;
 				}
 
@@ -189,7 +178,7 @@ public class ProductFilterServlet extends HttpServlet {
 			req.setAttribute("ship", ship);
 			req.setAttribute("starSearch", starSearch);
 			req.setAttribute("searchWord", search);
-			req.setAttribute("sendList", sendList);
+			req.setAttribute("sendList", prodList);
 			req.setAttribute("sortType", sortType);
 			RequestDispatcher requestDispatcher = req.getRequestDispatcher("/Shop/shop4_search.jsp");
 			requestDispatcher.forward(req, res);
@@ -240,14 +229,14 @@ class SaleDesc implements Comparator<ProdToShow> {
 
 	@Override
 	public int compare(ProdToShow o1, ProdToShow o2) {
-		if (o1.getPrice() == null) {
-			return (o2.getPrice() == null) ? 0 : 1;
+		if (o1.getSale() == null) {
+			return (o2.getSale() == null) ? 0 : 1;
 		}
-		if (o2.getPrice() == null) {
+		if (o2.getSale() == null) {
 			return -1;
 		}
 
-		return o2.getPrice() - o1.getPrice();
+		return o2.getSale() - o1.getSale();
 	}
 
 }

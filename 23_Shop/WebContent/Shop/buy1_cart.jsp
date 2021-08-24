@@ -3,19 +3,9 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-<jsp:useBean id="ShopCartDao" class="com.shop.service.ShopCartService"/>
 <jsp:useBean id="ProdPicDao" class="com.shop.service.ProdPicsService"/>
 <jsp:useBean id="SpecDao" class="com.shop.service.ProdSpecService"/>
 <jsp:useBean id="ProdDao" class="com.shop.service.ProdService"/>
-
-<%
-//id要換!
-	List<ShopCart> shopList = ShopCartDao.getAllShopCartByUserID(6);
-	pageContext.setAttribute("shopList", shopList);
-%>
-
-
-
 
 
 
@@ -27,15 +17,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>購物車</title>
-    <link rel="stylesheet" href="vendors/bootstrap.min.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/Shop/vendors/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css" integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
-    <link rel="stylesheet" href="style/style.css">
-    <link rel="stylesheet" href="style/buy.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/Shop/style/style.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/Shop/style/buy.css">
 
 </head>
 
 <body>
-
+	<jsp:include page="pieces/header.jsp"></jsp:include> <!-- header -->
    <jsp:include page="pieces/search_bar.jsp"></jsp:include> <!-- search_bar -->
 
     <!------------- main page --------------->
@@ -75,7 +65,7 @@
             <h1>購物車</h1>
             <hr>
 
-            <form id="cart" action="<%= request.getContextPath() %>/ShopToComfirmServlet">
+            <form method="POST" id="cart" action="<%= request.getContextPath() %>/ShopToComfirmServlet">
                 
                 
                 <c:if test="${shopList.size()==0 }">
@@ -94,24 +84,36 @@
                 <hr>
                 </c:if>
                 
-                <c:forEach var="prod" items="${shopList}">
-					
+                <c:forEach var="prod" items="${shopList}" varStatus="s">
 						<div class="row justify-content-between each_product">
 						    <div class="col-2 pic">
 						        <label class="row align-items-center items">
-						            <input class="col-1" type="checkbox" name="specCheck" value="${prod.prod_spec_id}" checked>
+							        <c:if test="${prod.prod_num == 0}">
+							    		<input class="col-1" type="checkbox" disabled>
+							    	</c:if>	
+							    	<c:if test="${prod.prod_num != 0}">
+							    		<input class="col-1" type="checkbox" name="specCheck" value="${prod.prod_spec_id}" checked>
+							    	</c:if>	
+						            
 						            <img class="col-11" src="/FFF/ProdImage?id=${ProdPicDao.getAllProdPicByProdID(SpecDao.getOneProdSpecByPK(prod.prod_spec_id).prod_id).get(0).getProd_pic_id()}" alt="">
 						        </label>
 						    </div>
 						    <div class="col-4">
-						        <a href=""><p>${ProdDao.getOneById(SpecDao.getOneProdSpecByPK(prod.prod_spec_id).prod_id).prod_name}</p></a>
+						        <a href="/FFF/ShowEachProd?prodID=${SpecDao.getOneProdSpecByPK(prod.prod_spec_id).prod_id}"><p>${ProdDao.getOneById(SpecDao.getOneProdSpecByPK(prod.prod_spec_id).prod_id).prod_name}</p></a>
 						        <div class="spec" id="${prod.prod_spec_id}">${SpecDao.getOneProdSpecByPK(prod.prod_spec_id).spec_name}</div>
+						    	<c:if test="${ errorMessage != null && errorMessage[s.index] != 0}"><p style="color:red">庫存剩餘${errorMessage[s.index]}個請重新選擇!</p></c:if>
 						    </div>
 						    <div class="col-1">${String.format("%,d",SpecDao.getOneProdSpecByPK(prod.prod_spec_id).prod_price)}</div>
-						    <div class="col-2 amount">
-						        <button type="button" class="minus">-</button>
-						        <input type="text" class="prod_num" name="specAmount${prod.prod_spec_id}" value="${prod.prod_num}" readonly >
-						        <button type="button" class="plus">+</button>
+						    <div class="col-2 amount">	
+						    	<c:if test="${prod.prod_num == 0}">
+						    		已無庫存!
+						    	</c:if>
+						    	<c:if test="${prod.prod_num != 0}">
+						    		<button type="button" class="minus">-</button>
+						        	<input type="text" class="prod_num" name="specAmount${prod.prod_spec_id}" value="${prod.prod_num}" readonly >
+						        	<button type="button" class="plus">+</button>
+						    	</c:if>				        
+						        
 						    </div>
 						    <div class="col-1 total_price">${String.format("%,d",prod.prod_num*SpecDao.getOneProdSpecByPK(prod.prod_spec_id).prod_price)}</div>
 						    <div class="col-1 trash"><i class="fas fa-trash-alt"></i></div>
@@ -147,14 +149,13 @@
             
             </section>
 
-
+	<div class="add_to_cart_alert" style="display:none">超出庫存!</div>
              
     </section>
 
         <section class="confirm">
-            <span>共選擇<span class="total_count">0</span>項商品，總金額: $<span class="total_price">0</span></span>
-            
             <c:if test="${shopList.size()!=0 }">
+            	<span>共選擇<span class="total_count">0</span>項商品，總金額: $<span class="total_price">0</span></span>
                 <button><i class="fas fa-arrow-circle-right"></i>寄件與付款資訊</button>
             </c:if>
         </section>
@@ -166,25 +167,26 @@
 
 
 
-    <script src="vendors/jquery-3.6.0.min.js"></script>
-    <script src="js/index.js"></script>
+    <script src="<%= request.getContextPath() %>/Shop/vendors/jquery-3.6.0.min.js"></script>
+    <script src="<%= request.getContextPath() %>/Shop/vendors/bootstrap.bundle.min.js"></script>
+    <script src="<%= request.getContextPath() %>/Shop/js/index.js"></script>
     <script>
-        calc_total_price(); //重新計算總額
+    
+    $(document).ready(function(){
+    	calc_total_price(); //重新計算總額
         // 商品加減按鈕
         $("button.minus").on("click", function(e){
             let current_amount = e.target.nextSibling.nextSibling;
             if (current_amount.value > 1) {
-                current_amount.value -= 1;
-
+                
+                let that = $(this);
                 //設定小計
-                let num = parseInt(current_amount.value);
-                let original_price = parseInt($(this).parent().prev().text().replace(",", ''));
-                $(this).parent().next().text((num*original_price).toLocaleString());
-
-                let spec = $(this).parent("div.each_product").prev().prev().find("div.spec");
+                let num = parseInt(current_amount.value)-1;
+                
+                
+                let spec = $(this).parents("div.each_product").find("div.spec");
                 let obj = {
                 "type":"update",
-                "userid": 1,
                 "specid" : $(spec).attr("id"),
                 "num":num
                 }
@@ -195,9 +197,20 @@
                         data: obj,
                         success: function (data) {
                             console.log(data);
+                            if(data == num){
+                            	current_amount.value -= 1;
+                            } else{
+                            	current_amount.value = data;
+                            	console.log("超出庫存!");
+                            	$("div.add_to_cart_alert").stop(true, false).fadeIn().delay(500).fadeOut();
+                            }
+                            
+                            let original_price = parseInt($(that).parent().prev().text().replace(",", ''));
+                            $(that).parent().next().text((current_amount.value*original_price).toLocaleString());
+            				
+		                    calc_total_price(); //重新計算總額
                         }
                 });
-                    calc_total_price(); //重新計算總額
                 }
             
         });
@@ -205,18 +218,11 @@
         $("button.plus").on("click", function(e){
             let val_plus = parseInt(e.target.previousSibling.previousSibling.value);
             let current_amount = e.target.previousSibling.previousSibling;
-            current_amount.value = val_plus + 1;
-
-            //設定小計
-            let num = parseInt(current_amount.value);
-            let original_price = parseInt($(this).parent().prev().text().replace(",", ''));
-            $(this).parent().next().text((num*original_price).toLocaleString());
-
-            let spec = $(this).parents().prev().prev().find("div.spec");
-            
+            let that=$(this);
+            let num = parseInt(current_amount.value)+1;
+            let spec = $(this).parents("div.each_product").find("div.spec");
             let obj = {
                 "type":"update",
-                "userid": 1,
                 "specid" : $(spec).attr("id"),
                 "num":num
             }
@@ -227,10 +233,24 @@
                     data: obj,
                     success: function (data) {
                         console.log(data);
+                        if(data >= num){
+                        	current_amount.value = val_plus + 1;
+
+                            //設定小計
+                            let original_price = parseInt($(that).parent().prev().text().replace(",", ''));
+                            $(that).parent().next().text((num*original_price).toLocaleString());
+                            calc_total_price(); //重新計算總額
+                        } else{
+                        	console.log("超出庫存!");
+                        	$("div.add_to_cart_alert").stop(true, false).fadeIn().delay(500).fadeOut();
+                            
+                        }
+                        
+                        
                     }
             });
 
-                calc_total_price(); //重新計算總額
+                
             });
         
         
@@ -258,6 +278,7 @@
             });
 
             calc_total_price();
+            update_preview_cart();
         });
 
         //全選按鈕設定
@@ -282,8 +303,11 @@
             calc_total_price();
         });
 
-        //計算目前有打勾的總金額
-        function calc_total_price() {
+        
+    })
+
+    //計算目前有打勾的總金額
+    function calc_total_price() {
         let total_price = 0;
         let total_count=0;
         $("label.items input:checked").each(function () {
@@ -293,6 +317,7 @@
         $("span.total_count").text(total_count);
         $("span.total_price").text(total_price.toLocaleString());
         }
+        
     </script>
 </body>
 

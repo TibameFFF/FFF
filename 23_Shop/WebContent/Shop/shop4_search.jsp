@@ -31,7 +31,7 @@
 
 
 <body class="container-fluid">
-    
+	<jsp:include page="pieces/header.jsp"></jsp:include> <!-- header -->
     <jsp:include page="pieces/search_bar.jsp"></jsp:include> <!-- search_bar -->
 
 
@@ -60,9 +60,9 @@
             	
             	<p>分類</p>
             	<label><input type="checkbox" name="prod_type" value=1 <%if(typeCheckList.size()!=4 && typeCheckList.contains(1)){%>checked<% }%>>生活休閒</label>
-	            <label><input type="checkbox" name="prod_type" value=2 <%if(typeCheckList.size()!=4 && typeCheckList.contains(1)){%>checked<% }%>>美妝保養</label>
-	            <label><input type="checkbox" name="prod_type" value=3 <%if(typeCheckList.size()!=4 && typeCheckList.contains(1)){%>checked<% }%>>風格穿搭</label>
-	            <label><input type="checkbox" name="prod_type" value=4 <%if(typeCheckList.size()!=4 && typeCheckList.contains(1)){%>checked<% }%>> 3C家電 </label>
+	            <label><input type="checkbox" name="prod_type" value=2 <%if(typeCheckList.size()!=4 && typeCheckList.contains(2)){%>checked<% }%>>美妝保養</label>
+	            <label><input type="checkbox" name="prod_type" value=3 <%if(typeCheckList.size()!=4 && typeCheckList.contains(3)){%>checked<% }%>>風格穿搭</label>
+	            <label><input type="checkbox" name="prod_type" value=4 <%if(typeCheckList.size()!=4 && typeCheckList.contains(4)){%>checked<% }%>> 3C家電 </label>
 	            <hr>
             </c:if>
             <%
@@ -91,10 +91,10 @@
             <label class="star_radio"><input type="radio" name="star" value="1" <c:if test = "${starSearch == 1 }">checked</c:if>>一星以上</label>
             <hr>
             <p>排序條件</p>
-            <label><input type="radio" name="sort" value="4" <c:if test = "${sortType == 1 }">checked</c:if>>銷售排行</label>
-            <label><input type="radio" name="sort" value="3" <c:if test = "${sortType == 2 }">checked</c:if>>評價</label>
-            <label><input type="radio" name="sort" value="2" <c:if test = "${sortType == 3 }">checked</c:if>>價格:高到低</label>
-            <label><input type="radio" name="sort" value="1" <c:if test = "${sortType == 4 }">checked</c:if>>價格:低到高</label>
+            <label><input type="radio" name="sort" value="1" <c:if test = "${sortType == 1 }">checked</c:if>>銷售排行</label>
+            <label><input type="radio" name="sort" value="2" <c:if test = "${sortType == 2 }">checked</c:if>>評價</label>
+            <label><input type="radio" name="sort" value="3" <c:if test = "${sortType == 3 }">checked</c:if>>價格:高到低</label>
+            <label><input type="radio" name="sort" value="4" <c:if test = "${sortType == 4 }">checked</c:if>>價格:低到高</label>
             	
             <div class="row">
             <div class="col-2"></div>
@@ -136,10 +136,17 @@
  
  
             <c:forEach var="prod" items="${sendList}" begin="<%=pageIndex%>" end="<%=pageIndex+rowsPerPage-1%>">
-	
+		
 	            <div class="product">
-	                <i class="far fa-heart fa-lg heart_btn"></i>
-	                <div class="heart_tag">加入收藏</div>
+	            	<c:if test="${prod.favProd}">
+	            		<i class="fas fa-heart fa-lg heart_btn"></i>
+	                	<div class="heart_tag">取消收藏</div>
+	            	</c:if>
+	            	<c:if test="${!prod.favProd}">
+	            		<i class="far fa-heart fa-lg heart_btn"></i>
+	                	<div class="heart_tag">加入收藏</div>
+	            	</c:if>
+	                
 	                <a href="/FFF/ShowEachProd?prodID=${prod.prod_id}">
 	                	<c:if test="${prod.img2 != null}">
 	                		<img src="/${prod.img1}" alt="product pictures"
@@ -271,30 +278,61 @@
     <script src="<%= request.getContextPath() %>/Shop/js/index.js"></script>
     <script src="<%= request.getContextPath() %>/Shop/vendors/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.js"></script>
+    
     <script>
+	$(document).ready(function(){
+		// 商品加減按鈕
+	    let minus_list = document.getElementsByClassName("minus");
+	    let plus_list = document.getElementsByClassName("plus");
+	    for (let i = 0; i < minus_list.length; i++) {
+	        minus_list[i].addEventListener("click", function (e) {
+	        let current_amount = e.target.nextSibling.nextSibling;
+	        let price =
+	            e.target.parentNode.parentNode.previousSibling.previousSibling;
+	        if (current_amount.value > 1) {
+	            current_amount.value -= 1;
+	        }
+	        });
 
- // 商品加減按鈕
-    let minus_list = document.getElementsByClassName("minus");
-    let plus_list = document.getElementsByClassName("plus");
-    for (let i = 0; i < minus_list.length; i++) {
-        minus_list[i].addEventListener("click", function (e) {
-        let current_amount = e.target.nextSibling.nextSibling;
-        let price =
-            e.target.parentNode.parentNode.previousSibling.previousSibling;
-        if (current_amount.value > 1) {
-            current_amount.value -= 1;
-        }
-        });
+	        plus_list[i].addEventListener("click", function (e) {
+	        let val_plus = parseInt(e.target.previousSibling.previousSibling.value);
+	        let current_amount = e.target.previousSibling.previousSibling;
+	        current_amount.value = val_plus + 1;
+	        let price =
+	            e.target.parentNode.parentNode.previousSibling.previousSibling;
+	        });
+	    }
+	 // 加入購物車
+	    $("button#addCart").on("click", function (e) {
+	      $("div.add_to_cart_alert").fadeIn();
+	      $("div.add_to_cart_alert").delay(2000).fadeOut();
+	      e.stopImmediatePropagation();
+	      let spec = $("select.index_spec option:selected").val();
+	      let num = $("input[name='prod_num']").val();
+	      let obj = {
+	        type: "add",
+	        specid: spec,
+	        num: num,
+	      };
+	      $.ajax({
+	        url: "http://localhost:8081/FFF/ProdToCartServlet",
+	        type: "GET",
+	        dataType: "text",
+	        data: obj,
+	        success: function (data) {
+	          console.log(data);
+	          update_preview_cart();
+	        },
+	      });
+	    });
 
-        plus_list[i].addEventListener("click", function (e) {
-        let val_plus = parseInt(e.target.previousSibling.previousSibling.value);
-        let current_amount = e.target.previousSibling.previousSibling;
-        current_amount.value = val_plus + 1;
-        let price =
-            e.target.parentNode.parentNode.previousSibling.previousSibling;
-        });
-    }
-
+	    add_heart_btn();
+		
+		
+		
+	});
+ 
+ 
     </script>
 </body>
 

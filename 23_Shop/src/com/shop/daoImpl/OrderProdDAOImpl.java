@@ -17,12 +17,12 @@ import com.shop.util.Util;
 public class OrderProdDAOImpl implements OrderProdDAO{
 
 	@Override
-	public void add(OrderProd orderProd) {
-		Connection con = null;
+	public void add(Connection connection, OrderProd orderProd) throws SQLException{
+		Connection con = connection;
 		PreparedStatement ps = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+//			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
 			ps = con.prepareStatement("INSERT INTO shop.order_prod(ord_no, prod_spec_id, hist_prod_name, hist_prod_spec, hist_prod_price, hist_prod_pic, prod_num) VALUES(?, ?, ?, ?,?,?,?)");
 			
 			ps.setInt(1, orderProd.getOrd_no());
@@ -36,8 +36,8 @@ public class OrderProdDAOImpl implements OrderProdDAO{
 			ps.execute();
 			
 		} catch (SQLException e) {
-			throw new RuntimeException("A database error occured. "
-					+ e.getMessage());
+			e.printStackTrace();
+			throw new SQLException();
 		} finally {
 			
 			if(ps != null) {
@@ -48,13 +48,13 @@ public class OrderProdDAOImpl implements OrderProdDAO{
 				}
 			}
 			
-			if(con != null) {
-				try {
-					con.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+//			if(con != null) {
+//				try {
+//					con.close();
+//				} catch (SQLException e) {
+//					e.printStackTrace();
+//				}
+//			}
 		}
 		
 	}

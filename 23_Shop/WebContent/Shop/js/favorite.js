@@ -1,6 +1,6 @@
 //取得user收藏商品
 $.ajax({
-  url: "http://localhost:8081/FFF/ProdToIndex?type=favProd&userid=1",
+  url: "http://localhost:8081/FFF/ProdToIndex?type=favProd",
   type: "GET",
   dataType: "json",
   success: function (data) {
@@ -10,11 +10,13 @@ $.ajax({
       return;
     }
 
+    $("p#total_product_num").text(data.length + "項商品");
+    
     for (let i = 0; i < data.length; i++) {
       let str = `<div class="product">
                                         <i class="fas fa-heart fa-lg heart_btn"></i>
                                         <div class="heart_tag">取消收藏</div>
-                                        <a href="#${data[i]["prod_id"]}">`;
+                                        <a href="http://localhost:8081/FFF/ShowEachProd?prodID=${data[i]["prod_id"]}">`;
       //判斷是否有兩張圖
       if (data[i]["img2"]) {
         str += `<img src="http://localhost:8081/${data[i]["img1"]}" alt="product pictures"
@@ -53,21 +55,6 @@ $.ajax({
   },
 });
 
-$(".slider-prod-for").slick({
-  slidesToShow: 1,
-  slidesToScroll: 1,
-  arrows: false,
-  fade: true,
-  asNavFor: ".slider-prod-nav",
-});
-$(".slider-prod-nav").slick({
-  slidesToShow: 3,
-  slidesToScroll: 1,
-  asNavFor: ".slider-prod-for",
-  dots: true,
-  centerMode: true,
-  focusOnSelect: true,
-});
 //產生星數字串
 function star_rating_str_reg(star_rating) {
   let star_rate = "";

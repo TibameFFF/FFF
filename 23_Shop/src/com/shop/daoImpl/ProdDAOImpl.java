@@ -189,7 +189,7 @@ public class ProdDAOImpl implements ProdDAO {
 		try {
 			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
 			st = con.createStatement();
-			rs=st.executeQuery("SELECT * FROM shop.prod");
+			rs=st.executeQuery("SELECT * FROM shop.prod WHERE prod_status = 1" );
 			
 			while (rs.next()) {
 				Prod prod = new Prod();
@@ -266,11 +266,11 @@ public class ProdDAOImpl implements ProdDAO {
 		try {
 			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
 			if(type == 0) {
-				st = con.prepareStatement("SELECT * FROM SHOP.prod WHERE prod_name LIKE ? or prod_text LIKE ?");
+				st = con.prepareStatement("SELECT * FROM SHOP.prod WHERE (prod_name LIKE ? or prod_text LIKE ?) AND prod_status = 1");
 				st.setString(1, "%"+str+"%");
 				st.setString(2, "%"+str+"%");
 			} else {
-				st = con.prepareStatement("SELECT * FROM shop.prod WHERE prod_type_no =? ");
+				st = con.prepareStatement("SELECT * FROM shop.prod WHERE prod_type_no =? AND prod_status =1 AND prod_status = 1");
 				st.setInt(1, type);
 			}
 			
@@ -398,7 +398,7 @@ public class ProdDAOImpl implements ProdDAO {
 			sql.append(" AND pr.prod_type_no = ").append(type);
 		}
 		
-		
+		sql.append(" AND pr.prod_status =1");
 		
 //		System.out.println(sql);
 		
@@ -471,6 +471,51 @@ public class ProdDAOImpl implements ProdDAO {
 		
 		
 //		System.out.println(dao.filterByPriceTypeShip(price, typeList, ship, "1"));
+	}
+
+	@Override
+	public Integer findProdTotalNum() {
+		Connection con = null;
+		Statement st = null;
+		ResultSet rs = null;
+		int result =0;
+		try {
+			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			st = con.createStatement();
+			rs=st.executeQuery("SELECT COUNT(prod_id) FROM SHOP.prod WHERE prod_status = 1" );
+			
+			rs.next();
+			result = rs.getInt(1);
+			
+			
+		} catch (SQLException e) {
+			throw new RuntimeException("A database error occured. "
+					+ e.getMessage());
+		} finally {
+			if(rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if(st != null) {
+				try {
+					st.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if(con != null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return result;
 	}
 
 }
