@@ -66,7 +66,7 @@ public class MakeCommentServlet extends HttpServlet {
 		for(int i=0; i<prodIdList.size() && i<3; i++) {
 			String picId = "pic_"+prodIdList.get(i);
 			for(Part part: parts) {
-				if(picId.equals(part.getName())) {
+				if(picId.equals(part.getName()) && part.getSize() !=0) {
 					
 					InputStream is = part.getInputStream();
 					byte[] buffer = new byte[is.available()];
@@ -78,11 +78,8 @@ public class MakeCommentServlet extends HttpServlet {
 			
 		}
 		
-		
-		
-		
-		
-		res.sendRedirect("http://localhost:8081/FFF/Shop/index.html");
+		//評論完成後導到首頁(之後改成導到訂單頁面)
+		res.sendRedirect("http://localhost:8081/FFF/Shop/index.jsp");
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -13,47 +13,59 @@ import com.shop.service.FavProdService;
 @WebServlet("/FavProdServlet")
 public class FavProdServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		//http://localhost:8081/FFF/FavProdServlet?type=add&userid=1&prodid=2
+		// http://localhost:8081/FFF/FavProdServlet?type=add&userid=1&prodid=2
+		// 新增收藏
 		FavProdService fps = new FavProdService();
+		int idGetFromSession = 1;
+
 		
+//		判斷有沒有登入
+		if (idGetFromSession == 0) {
+			// 傳送
+			res.setContentType("text/html;charset=UTF-8");
+			res.addHeader("Access-Control-Allow-Origin", "*");
+			res.getWriter().write("未登入");
+			return;
+		}
+
 		String type = req.getParameter("type");
-		if("add".equals(type)) {
-			int userID = Integer.parseInt(req.getParameter("userid"));
+		if ("add".equals(type)) {
+			int userID = idGetFromSession;
 			int prodID = Integer.parseInt(req.getParameter("prodid"));
-			
+
 			fps.addFavProd(userID, prodID);
-			
+
 			// 傳送
 			res.setContentType("text/html;charset=UTF-8");
 			res.addHeader("Access-Control-Allow-Origin", "*");
 			res.getWriter().write("成功加入!");
 			return;
 		}
-		
-		//http://localhost:8081/FFF/FavProdServlet?type=remove&userid=1&prodid=2
-		if("remove".equals(type)) {
-			int userID = Integer.parseInt(req.getParameter("userid"));
+
+		// http://localhost:8081/FFF/FavProdServlet?type=remove&userid=1&prodid=2
+		// 移除收藏
+		if ("remove".equals(type)) {
+			int userID = idGetFromSession;
 			int prodID = Integer.parseInt(req.getParameter("prodid"));
-			
 			FavProd favProd = new FavProd();
 			favProd.setProd_id(prodID);
 			favProd.setUser_id(userID);
-			
+
 			fps.deleteFavProd(favProd);
-			
+
 			// 傳送
 			res.setContentType("text/html;charset=UTF-8");
 			res.addHeader("Access-Control-Allow-Origin", "*");
 			res.getWriter().write("成功刪除!");
 			return;
 		}
-	
-		
+
 	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		doGet(request, response);
 	}
 

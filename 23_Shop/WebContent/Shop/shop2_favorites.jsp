@@ -18,7 +18,7 @@
 </head>
 
 <body class="container-fluid">
-
+	<jsp:include page="pieces/header.jsp"></jsp:include> <!-- header -->
     <jsp:include page="pieces/search_bar.jsp"></jsp:include> <!-- search_bar -->
 
     <!------------- main page --------------->
@@ -26,7 +26,7 @@
         <!------------- product sort and type --------------->
         <article class="title">
             <h1>我的收藏</h1>
-            <p id="total_product_num">1項商品</p>
+            <p id="total_product_num">0項商品</p>
         </article>
         <hr>
 
@@ -61,20 +61,14 @@
     <div class="preview_prod_bg" style="display:none">
         <div class="preview_prod">
 
-            <div class="exit"><a href="#"><i class="far fa-times-circle fa-2x"></i></a></div>
-            <!-- 商品介紹 -->
+            <div class="exit"><i class="far fa-times-circle fa-2x"></i></div>
+            
             <section class="product_info row">
                 <div class="col-md-5">
                     <div class="big_pic slider-prod-for">
                         <img class="col-3" src="https://via.placeholder.com/300x200" alt="">
-                        <img class="col-3" src="https://via.placeholder.com/300x200" alt="">
-                        <img class="col-3" src="https://via.placeholder.com/300x200" alt="">
-                        <img class="col-3" src="https://via.placeholder.com/300x200" alt="">
                     </div>
                     <div class="small_pics row slider-prod-nav">
-                        <img class="col-3" src="https://via.placeholder.com/300x200" alt="">
-                        <img class="col-3" src="https://via.placeholder.com/300x200" alt="">
-                        <img class="col-3" src="https://via.placeholder.com/300x200" alt="">
                         <img class="col-3" src="https://via.placeholder.com/300x200" alt="">
                     </div>
                 </div>
@@ -83,9 +77,7 @@
                     <hr>
                     <div>
                         <span>商品選項: </span>
-                        <select name="spec">
-                            <option value="">ssss</option>
-                            <option value="">ssss</option>
+                        <select class="index_spec">
                             <option value="">ssss</option>
                         </select>
                     </div>
@@ -93,13 +85,13 @@
                         <span>數量: </span>
                         <div class="amount">
                             <button type="button" class="minus">-</button>
-                            <input type="text" name="" id="" value="1" readonly>
+                            <input type="text" name="prod_num" value="1" readonly>
                             <button type="button" class="plus">+</button>
                         </div>
                     </div>
                     <div class="btn">
                         <h2 id="prod_price">$1,000</h2>
-                        <button><i class="fas fa-shopping-cart"></i>加入購物車</button>
+                        <button id="addCart"><i class="fas fa-shopping-cart"></i>加入購物車</button>
                     </div>
                 </div>
             </section>

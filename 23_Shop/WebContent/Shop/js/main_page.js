@@ -1,4 +1,17 @@
 $(document).ready(function () {
+
+    //////////////////首頁////////////////////////////
+
+  //RWD篩選跳出
+  $("button.filter").on("click", function () {
+    $("aside").slideToggle();
+  });
+
+  
+
+  add_heart_btn();
+
+
   //取得注目商品
   $.ajax({
     url: "http://localhost:8081/FFF/ProdToIndex?type=recommandation",
@@ -53,11 +66,18 @@ $(document).ready(function () {
     data: obj,
     dataType: "json",
     success: function (data) {
+      console.log(data);
       for (let i = 0; i < data.length; i++) {
-        let str = `<div class="product">
-                                        <i class="far fa-heart fa-lg heart_btn"></i>
-                                        <div class="heart_tag">加入收藏</div>
-                                        <a href="http://localhost:8081/FFF/ShowEachProd?prodID=${data[i]["prod_id"]}">`;
+        let str = `<div class="product">`;
+
+        if(data[i]["favProd"]){
+          str+=  `<i class="fas fa-heart fa-lg heart_btn"></i>
+          <div class="heart_tag">取消收藏</div>`;
+        }else{
+          str+=  `<i class="far fa-heart fa-lg heart_btn"></i>
+          <div class="heart_tag">加入收藏</div>`;
+        }
+        str+= `<a href="http://localhost:8081/FFF/ShowEachProd?prodID=${data[i]["prod_id"]}">`;
         //判斷是否有兩張圖
         if (data[i]["img2"]) {
           str += `<img src="http://localhost:8081/${data[i]["img1"]}" alt="product pictures"
@@ -131,11 +151,17 @@ $(document).ready(function () {
             return;
           }
           for (let i = 0; i < data.length; i++) {
-            let str = `<div class="product">
-                                        <i class="far fa-heart fa-lg heart_btn"></i>
-                                        <div class="heart_tag">加入收藏</div>
-                                        <a href="http://localhost:8081/FFF/ShowEachProd?prodID=${data[i]["prod_id"]}">`;
-            //判斷是否有兩張圖
+            let str = `<div class="product">`;
+
+            if(data[i]["favProd"]){
+              str+=  `<i class="fas fa-heart fa-lg heart_btn"></i>
+              <div class="heart_tag">取消收藏</div>`;
+            }else{
+              str+=  `<i class="far fa-heart fa-lg heart_btn"></i>
+              <div class="heart_tag">加入收藏</div>`;
+            }
+            str+= `<a href="http://localhost:8081/FFF/ShowEachProd?prodID=${data[i]["prod_id"]}">`;
+        //判斷是否有兩張圖
             if (data[i]["img2"]) {
               str += `<img src="http://localhost:8081/${data[i]["img1"]}" alt="product pictures"
                                                 data-img1="http://localhost:8081/${data[i]["img1"]}" data-img2="http://localhost:8081/${data[i]["img2"]}">`;
@@ -179,47 +205,27 @@ $(document).ready(function () {
     }
   });
 
-  // 加入購物車
-  $("button#addCart").on("click", function (e) {
-    $("div.add_to_cart_alert").fadeIn();
-    $("div.add_to_cart_alert").delay(2000).fadeOut();
+//商品加減按鈕
+  let minus_list = document.getElementsByClassName("minus");
+  let plus_list = document.getElementsByClassName("plus");
+  for (let i = 0; i < minus_list.length; i++) {
+      minus_list[i].addEventListener("click", function (e) {
+      let current_amount = e.target.nextSibling.nextSibling;
+      let price =
+          e.target.parentNode.parentNode.previousSibling.previousSibling;
+      if (current_amount.value > 1) {
+          current_amount.value -= 1;
+      }
+      });
 
-    let spec = $("select.index_spec option:selected").val();
-    let num = $("input[name='prod_num']").val();
-    let obj = {
-      type: "add",
-      userid: 1,
-      specid: spec,
-      num: num,
-    };
-    $.ajax({
-      url: "http://localhost:8081/FFF/ProdToCartServlet",
-      type: "GET",
-      dataType: "text",
-      data: obj,
-      success: function (data) {
-        console.log(data);
-      },
-    });
-  });
+      plus_list[i].addEventListener("click", function (e) {
+      let val_plus = parseInt(e.target.previousSibling.previousSibling.value);
+      let current_amount = e.target.previousSibling.previousSibling;
+      current_amount.value = val_plus + 1;
+      let price =
+          e.target.parentNode.parentNode.previousSibling.previousSibling;
+      });
+  }
 });
 
-// 商品加減按鈕
-let minus_list = document.getElementsByClassName("minus");
-let plus_list = document.getElementsByClassName("plus");
-for (let i = 0; i < minus_list.length; i++) {
-  minus_list[i].addEventListener("click", function (e) {
-    let current_amount = e.target.nextSibling.nextSibling;
-    let price = e.target.parentNode.parentNode.previousSibling.previousSibling;
-    if (current_amount.value > 1) {
-      current_amount.value -= 1;
-    }
-  });
 
-  plus_list[i].addEventListener("click", function (e) {
-    let val_plus = parseInt(e.target.previousSibling.previousSibling.value);
-    let current_amount = e.target.previousSibling.previousSibling;
-    current_amount.value = val_plus + 1;
-    let price = e.target.parentNode.parentNode.previousSibling.previousSibling;
-  });
-}

@@ -3,6 +3,7 @@ package com.shop.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -25,7 +26,7 @@ public class ShopToComfirmServlet extends HttpServlet {
 		// http://localhost:8081/FFF/ShopToComfirmServlet?specCheck=101&specAmount101=3&specCheck=120&specAmount120=7
 		String[] checkList = req.getParameterValues("specCheck");
 
-		HashMap<Integer, Integer> resultList = new HashMap<>();
+		LinkedHashMap<Integer, Integer> resultList = new LinkedHashMap<>();
 
 		ArrayList<Integer> prodList = new ArrayList<Integer>(); // 取得所選擇spec的product ID List
 		ProdSpecService pss = new ProdSpecService();
@@ -34,16 +35,20 @@ public class ShopToComfirmServlet extends HttpServlet {
 		int total = 0;
 
 		// 取得勾選商品清單和數量
+		
 		for (String str : checkList) {
 			int specId = Integer.parseInt(str);
 			int prodNum = Integer.parseInt(req.getParameter("specAmount" + str));
 			num += prodNum;
 
 			ProdSpec prodSpec = pss.getOneProdSpecByPK(specId);
-			prodList.add(prodSpec.getProd_id());// 取得所選擇spec的product ID
-			total += prodSpec.getProd_price();// 計算商品數量和總價
 
-			resultList.put(specId, prodNum);
+			if(prodSpec.getStock() != 0) {//檢查商品有沒有庫存
+				
+				prodList.add(prodSpec.getProd_id());// 取得所選擇spec的product ID
+				total += prodSpec.getProd_price();// 計算商品數量和總價
+				resultList.put(specId, prodNum);
+			}
 		}
 
 		// 商品總數和總計
@@ -82,6 +87,7 @@ public class ShopToComfirmServlet extends HttpServlet {
 		allShipMethod.add(4); //加入都共同有的method		
 		
 		
+		//確認完成後導到訂單填寫頁
 		req.setAttribute("buyList", resultList);
 		req.setAttribute("totalList", totalList);
 		req.setAttribute("shipMethodList", allShipMethod);

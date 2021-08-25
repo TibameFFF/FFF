@@ -19,7 +19,7 @@
 
 
 <body>
-
+	<jsp:include page="pieces/header.jsp"></jsp:include> <!-- header -->
     <jsp:include page="pieces/search_bar.jsp"></jsp:include> <!-- search_bar -->
     
     
@@ -173,7 +173,7 @@
             </section>
 
             <!-- 退換貨內容 -->
-            <div class="re_ex">
+            <!--<div class="re_ex">
                 <hr>
                 <section class="re_ex_inner">
                     <div>
@@ -184,7 +184,7 @@
                         <p>退換貨金額:XXX</p>
                     </div>
                 </section>
-            </div>
+            </div> -->
 
             <hr>
 
@@ -194,29 +194,32 @@
                 <button class="btn_goto_orderlist">返回我的訂單</button>
                 
                 <c:if test="${'訂單成立' == orderDetailList.status}">
-	            	<button class="btn_goto_orderlist">取消訂單</button>
+	            	<button class="btn_order_cancel">取消訂單</button>
 	            </c:if>
                 
                 <c:if test="${prodList[0].eval_star == 0 && '訂單完成' == orderDetailList.status}">
-	            	<button class="btn_goto_comment">評價</button>
+	            	<a href="/FFF/Shop/order2_comment.jsp?id=${orderDetailList.id.replace('O','')}"><button class="btn_goto_comment">評價</button></a>
 	            </c:if>
                 
                 
                 <!-- <button class="btn_goto_ReEx">退貨/換貨</button> -->
-                <button class="btn_support">聯繫客服</button>
+<%--                 <c:if test="${ '訂單取消' != orderDetailList.status}"> --%>
+<!-- 	            	<button class="btn_support">聯繫客服</button> -->
+<%-- 	            </c:if> --%>
+                
                 <p>訂單總額: ${String.format("%,d",Integer.parseInt(orderDetailList.total)+Integer.parseInt(orderDetailList.shipFee))}</p>
             </section>
 
 
 
-            <!-- 聯繫客服 -->
-            <article class="costumer_support" style="display:none">
-                <hr>
-                <p>聯繫內容</p>
-                <textarea name="" id="" cols="30" rows="10">請輸入內容....</textarea>
-                <button class="yes">確認送出</button>
-                <button class="no">取消</button>
-            </article>
+<!--             聯繫客服 -->
+<!--             <article class="costumer_support" style="display:none"> -->
+<!--                 <hr> -->
+<!--                 <p>聯繫內容</p> -->
+<!--                 <textarea name="" id="" cols="30" rows="10">請輸入內容....</textarea> -->
+<!--                 <button class="yes">確認送出</button> -->
+<!--                 <button class="no">取消</button> -->
+<!--             </article> -->
         </section>
 
 
@@ -227,27 +230,28 @@
 
     <footer>footer~~~~~~~~~~~~~~~~</footer>
 
-    <div class=confirm_jump_bg style="display:none">
+    <div class="confirm_jump_bg order_popup" style="display:none">
         <div class="confirm_jump">
             <p>是否確認取消訂單? </p>
             <div>
-                <button class="cust_comfirm">確認</button>
+                <button class="comfirm_cancel" data-id="${orderDetailList.id.replace('O','')}">確認</button>
                 <button class="cust_comfirm">取消</button>
             </div>
         </div>
     </div>
 
 
-    <div class=confirm_jump_bg style="display:none">
-        <div class="confirm_jump">
-            <p>感謝您的意見! </p>
-            <p>客服人員將盡快與您聯繫!</p>
-            <div>
-                <button class="cust_comfirm">確認</button>
-            </div>
-        </div>
-    </div>
+<!--     <div class=confirm_jump_bg style="display:none"> -->
+<!--         <div class="confirm_jump"> -->
+<!--             <p>感謝您的意見! </p> -->
+<!--             <p>客服人員將盡快與您聯繫!</p> -->
+<!--             <div> -->
+<!--                 <button class="cust_comfirm">確認</button> -->
+<!--             </div> -->
+<!--         </div> -->
+<!--     </div> -->
     <script src="<%= request.getContextPath() %>/Shop/vendors/jquery-3.6.0.min.js"></script>
+    <script src="<%= request.getContextPath() %>/Shop/vendors/bootstrap.bundle.min.js"></script>
     <script src="<%= request.getContextPath() %>/Shop/js/index.js"></script>
 </body>
 

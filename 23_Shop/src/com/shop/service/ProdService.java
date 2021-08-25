@@ -55,4 +55,8 @@ public class ProdService {
 	public List<Prod> getAllbyFilter(List<Integer> price, List<Integer> typeList, List<Integer> ship, String search){
 		return dao.filterByPriceTypeShip(price, typeList, ship, search);
 	}
+	
+	public  Integer findProdTotalNum() {
+		return dao.findProdTotalNum();
+	}
 }

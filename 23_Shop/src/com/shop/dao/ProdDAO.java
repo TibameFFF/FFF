@@ -9,6 +9,7 @@ public interface ProdDAO {
 	void update(Prod prod);
 	void delete(int id);
 	Prod findByPK(int id);
+	Integer findProdTotalNum();
 	List<Prod> getAll();
 	List<Prod> getBySearch(String str);
 	List<Prod> filterByPriceTypeShip(List<Integer> price, List<Integer> typeList, List<Integer> ship , String search );

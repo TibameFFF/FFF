@@ -4,7 +4,7 @@
 <%@ page import="java.util.*, com.shop.model.*, com.shop.util.*" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<!-- http://localhost:8081/FFF/ShowEachProd?prodID=1 -->
+
 
 <!DOCTYPE html>
 <html lang="zh-hant">
@@ -42,24 +42,32 @@
 	List<ProdPics> picList = prodPicDAO.findByProdID(prodID);
 	pageContext.setAttribute("picList", picList);
 	
-	List<ProdSpec> specList = prodSpecDAO.findByProdID(prodID);
-	pageContext.setAttribute("specList", specList);
+	
+	List<ProdSpec> allSpecList = prodSpecDAO.findByProdID(prodID);
+	List<ProdSpec> showSpecList = new ArrayList<ProdSpec>();
+	for(ProdSpec prodSpec: allSpecList){
+		if(prodSpec.getStock() > 0 ) {
+			showSpecList.add(prodSpec);
+	}}
+	pageContext.setAttribute("specList", showSpecList);
 	
 	List<ShipMethod> shipMethodList = shipMethodDAO.getAll();
 	pageContext.setAttribute("shipMethodList", shipMethodList);
 	
 	List<ProdShips> prodShipList = prodShipDAO.findByProdID(prodID);
 	pageContext.setAttribute("prodShipList", prodShipList);
+
 	
 	List<OrderProd> orderProductList = new ArrayList<>();
-	for(int i=0; i< specList.size(); i++){
-		for(OrderProd orderProd: OrderProdDAO.getAllByProdSpec(specList.get(i).getProd_spec_id())){
+	for(int i=0; i< showSpecList.size(); i++){
+		for(OrderProd orderProd: OrderProdDAO.getAllByProdSpec(showSpecList.get(i).getProd_spec_id())){
 			orderProductList.add(orderProd);
 		}
 	}
 	pageContext.setAttribute("orderProductList", orderProductList);
 		
 %>
+
 
 
 
@@ -83,7 +91,7 @@
 
 
 <body class="container-fluid">
-
+	<jsp:include page="pieces/header.jsp"></jsp:include> <!-- header -->
     <jsp:include page="pieces/search_bar.jsp"></jsp:include> <!-- search_bar -->
 
     <!-------------------------------- main page -------------------------------->
@@ -119,14 +127,13 @@
 							  <i class="far fa-star"></i>
 						<%}%>
                     </span>
-                    <span class="col-sm-4" id="eval_total">${showDAO.getNumComment(prodID)}則評價</span>
+                    <span class="col-sm-4" id="eval_total">${commentList.size()}則評價</span>
                     <span class="col-sm-4" id="sale_total">已銷售${showDAO.getNumSale(prodID)}件</span>
                 </div>
                 <hr>
 				
                 <div class="spec_choice">
                     <span>商品選項: </span>
-                    
                     
                     <c:forEach var="spec" items="${specList}" varStatus="s">
                     <c:if test="${s.index == 0}">
@@ -142,14 +149,17 @@
                     <label for="green">綠色</label>
                     -->
                 </div>
-                <div>
-                    <span>數量: </span>
-                    <div class="amount">
-                        <button type="button" class="minus prod_page">-</button>
-                        <input type="text" name="prod_amount" id="" value="1" readonly>
-                        <button type="button" class="plus prod_page">+</button>
-                    </div>
-                </div>
+                <c:if test="${specList.size() !=0}">
+                    <div>
+	                    <span>數量: </span>
+	                    <div class="amount">
+	                        <button type="button" class="minus prod_page">-</button>
+	                        <input type="text" name="prod_amount" id="" value="1" readonly>
+	                        <button type="button" class="plus prod_page">+</button>
+	                    </div>
+	                </div>
+                </c:if>
+               
                 <div id="ship_method">運送方式：
                 	<c:forEach var="prodShip" items ="${prodShipList}" varStatus="s">
 	                	<c:forEach var="ship" items="${shipMethodList}">
@@ -158,16 +168,22 @@
 	                    	</c:if>
 	                    	
 	                    </c:forEach>
-	                    <c:if test="${not s.last}">
-	                    	、
-	                    </c:if>
+	                    <c:if test="${not s.last}">、</c:if>
                 	</c:forEach>
                 </div>
                 <div class="btn">
-                    <h2 id="prod_price">$${String.format("%,d",specList[0].prod_price)}</h2>
-                    <button id="add_to_cart" data-spec="${specList[0].prod_spec_id}" data-num="1"><i class="fas fa-shopping-cart"></i>加入購物車</button>
-                    <button id="heart"><i  class="fas fa-heart"></i></button>
+                	<c:if test="${specList.size() ==0}">
+                    	<h2 id="prod_price">已無庫存!</h2>
+                    </c:if>
+                    <c:if test="${specList.size() !=0}">
+                    	<h2 id="prod_price">$${String.format("%,d",specList[0].prod_price)}</h2>
+                    </c:if>
+                    
+                    <c:if test="${specList.size() !=0}"><button id="add_to_cart" data-spec="${specList[0].prod_spec_id}" data-num="1"><i class="fas fa-shopping-cart"></i>加入購物車</button></c:if>
+                    <button id="heart" data-id="${prodID}"><i  class="<c:if test="${favProd}">fas</c:if><c:if test="${!favProd}">far</c:if> fa-heart"></i></button>
                 </div>
+                
+                
             </div>
         </section>
 
@@ -182,7 +198,7 @@
         <section class="product_eval">
             <div class="product_eval_header row align-items-center">
                 <h3 class="col-md-2">商品評價</h3>
-                <span class="star_rate col-md-2">
+                <span class="star_rate col-md-5">
                     <%
 						//做星星html的顯示字串
 						for (double i = star_temp; i > 0; i--) {
@@ -196,33 +212,26 @@
 					<%}%>
                     <span><fmt:formatNumber value="${star_rating}" type="number" maxFractionDigits="1"/>顆星</span>
                 </span>
-                <span class="col-md-2" id="comment_total">${showDAO.getNumComment(prodID)}則評價</span>
-<!--                 <div class="type_star_btn col-md-6"> -->
-<!--                     <button class="-on all">全部(12)</button> -->
-<!--                     <button class="one">一星(0)</button> -->
-<!--                     <button class="two">二星(4)</button> -->
-<!--                     <button class="three">三星(4)</button> -->
-<!--                     <button class="four">四星(4)</button> -->
-<!--                     <button class="five">五星(0)</button> -->
-<!--                 </div> -->
+                <span class="col-md-5" id="comment_total">${commentList.size()}則評價</span>
+              
 
             </div>
             <hr>
             <div class="eval_detail">
-				<c:forEach var="ordPro" items="${orderProductList }">
+				<c:forEach var="comment" items="${commentList }">
 					
 					
 					<article class="row each_eval row align-items-center">
                     <div class="eval_user col-sm-3">
                         <img src="https://via.placeholder.com/300x400" alt="">
-                        <p>帳號名稱: ${OrderDAO.getOneByOrderId(ordPro.getOrd_no()).getUser_id()}</p>
+                        <p>帳號名稱:${comment.name }</p>
                         <div>
                         	<c:forEach begin="1" end="5" varStatus="s">
-                        		<c:if test="${s.count > ordPro.eval_star }">
+                        		<c:if test="${s.count > comment.star }">
                         			<i class="far fa-star"></i>
                         		
                         		</c:if>
-                        		<c:if test="${s.count <= ordPro.eval_star }">
+                        		<c:if test="${s.count <= comment.star }">
                         			<i class="fas fa-star"></i>
                         		
                         		</c:if>
@@ -235,10 +244,10 @@
                         </div>
                     </div>
                     <div class=" eval_detail col-sm-9">
-                        <p>${ordPro.eval_text}</p>
+                        <p>${comment.text}</p>
                         <div class="pic_area row">
-                        	<c:forEach var="evalPic" items="${EvalPicDAO.getEvalPicByProdId(ordPro.ord_prod_id) }">
-	                            <img class="col-sm-2 " src="/FFF/EvalPicImage?id=${evalPic.eval_pic_id }" alt="">
+                        	<c:forEach var="evalPic" items="${comment.pic}">
+	                            <img class="col-sm-2 " src="${evalPic}" alt="">
                         	</c:forEach>
                         </div>
                     </div>
@@ -270,10 +279,6 @@
 
                
             </div>
-            <section class="page">
-                <button class="no_more_page">&lt</button>
-                <button class="no_more_page">&gt</button>
-            </section>
 
     </main>
 
@@ -285,8 +290,10 @@
     <script src="<%= request.getContextPath() %>/Shop/vendors/jquery-3.6.0.min.js"></script>
     <script src="<%= request.getContextPath() %>/Shop/js/index.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.js"></script>
+    <script src="<%= request.getContextPath() %>/Shop/vendors/bootstrap.bundle.min.js"></script>
     <script>
-        $('.slider-for').slick({
+    $(document).ready(function(){
+    	$('.slider-for').slick({
             slidesToShow: 1,
             slidesToScroll: 1,
             arrows: false,
@@ -305,10 +312,7 @@
         $("button#add_to_cart").on("click", function(e){
             let num = parseInt(e.target.dataset.num);
             let spec = parseInt(e.target.dataset.spec);
-            console.log(num + spec);
 
-            $("div.add_to_cart_alert").fadeIn();
-            $("div.add_to_cart_alert").delay(2000).fadeOut();
 
             let obj = {
                 "type" : "add",
@@ -322,10 +326,17 @@
                     dataType: "text",
                     data: obj,
                     success: function (data) {
-                        console.log(data);
-
+                    	if(data=="未登入"){
+                       	  $("div.add_to_cart_alert").text("請先登入!");
+                        } else{
+                       	  $("div.add_to_cart_alert").text("成功加入購物車!");
+                       		update_preview_cart();
+                        }
+                         console.log(data);
+                        $("div.add_to_cart_alert").stop(true, false).fadeIn();
+                        $("div.add_to_cart_alert").delay(2000).fadeOut();
+                        
                     }
-
                 });
         });
 
@@ -354,6 +365,8 @@
         $("button.prod_page").on("click", function(){
             $("button#add_to_cart").attr("data-num", $(this).siblings("input").val())
         })
+    });
+        
 
     </script>
 

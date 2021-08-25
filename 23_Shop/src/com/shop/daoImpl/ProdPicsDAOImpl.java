@@ -146,6 +146,64 @@ public class ProdPicsDAOImpl implements ProdPicsDAO{
 			while(rs.next()) {
 				ProdPics prodPics = new ProdPics();
 				prodPics.setProd_id(id);
+//				prodPics.setProd_pic(rs.getBytes("prod_pic"));
+				prodPics.setProd_pic_id(rs.getInt("prod_pic_id"));
+				
+				list.add(prodPics);
+			}
+			
+			
+			
+		} catch (SQLException e) {
+			throw new RuntimeException("A database error occured. "
+					+ e.getMessage());
+		} finally {
+			
+			if(rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if(ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if(con != null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return list;
+	
+	}
+	
+	@Override
+	public List<ProdPics> findByProdIDForOrder(int id) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		List<ProdPics> list = new ArrayList<ProdPics>();
+		ResultSet rs = null;
+		
+		try {
+			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			ps = con.prepareStatement("SELECT * FROM shop.prod_pics WHERE prod_id=?");
+			ps.setInt(1, id);
+			
+			rs = ps.executeQuery();
+			
+			while(rs.next()) {
+				ProdPics prodPics = new ProdPics();
+				prodPics.setProd_id(id);
 				prodPics.setProd_pic(rs.getBytes("prod_pic"));
 				prodPics.setProd_pic_id(rs.getInt("prod_pic_id"));
 				

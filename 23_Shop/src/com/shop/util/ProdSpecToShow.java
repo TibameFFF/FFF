@@ -5,10 +5,16 @@ import java.util.ArrayList;
 public class ProdSpecToShow {
 	private ArrayList<String> specList;
 	private ArrayList<Integer> specIdList;
-	
 	private ArrayList<Integer> specPriceList;
+	private ArrayList<Integer> specStockList;
 	private ArrayList<Integer> prodPicList;
 	
+	public ArrayList<Integer> getSpecStockList() {
+		return specStockList;
+	}
+	public void setSpecStockList(ArrayList<Integer> specStockList) {
+		this.specStockList = specStockList;
+	}
 	public ArrayList<Integer> getSpecIdList() {
 		return specIdList;
 	}

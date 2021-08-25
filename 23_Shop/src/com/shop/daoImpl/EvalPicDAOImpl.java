@@ -70,7 +70,7 @@ public class EvalPicDAOImpl implements EvalPicDAO{
 			
 			while(rs.next()) {
 				EvalPic evalPic = new EvalPic();
-				evalPic.setEval_pic(rs.getBytes("eval_pic"));
+//				evalPic.setEval_pic(rs.getBytes("eval_pic"));
 				evalPic.setOrd_prod_id(rs.getInt("ord_prod_id"));
 				evalPic.setEval_pic_id(rs.getInt("eval_pic_id"));
 				list.add(evalPic);

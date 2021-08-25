@@ -18,12 +18,12 @@ import com.shop.util.Util;
 public class OrderDAOImpl implements OrderDAO{
 	
 	@Override
-	public int add(Order order) {
-		Connection con = null;
+	public int add(Connection connection, Order order) throws SQLException {
+		Connection con = connection;
 		PreparedStatement ps = null;
 		ResultSet resultSet = null;
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+//			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
 			String[] col = {"ord_no"};
 			ps = con.prepareStatement("INSERT INTO shop.order(user_id, support_admin_id, ord_time, ord_status, ord_total, ship_method, ship_info, ship_fee) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", col);
 			
@@ -43,8 +43,9 @@ public class OrderDAOImpl implements OrderDAO{
 			return resultSet.getInt(1);
 			
 		} catch (SQLException e) {
-			throw new RuntimeException("A database error occured. "
-					+ e.getMessage());
+			e.printStackTrace();
+			System.out.println(1);
+			throw new SQLException();
 		} finally {
 			
 			if(ps != null) {
@@ -54,14 +55,14 @@ public class OrderDAOImpl implements OrderDAO{
 					e.printStackTrace();
 				}
 			}
-			
-			if(con != null) {
-				try {
-					con.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+//			
+//			if(con != null) {
+//				try {
+//					con.close();
+//				} catch (SQLException e) {
+//					e.printStackTrace();
+//				}
+//			}
 		}
 		
 	}
@@ -73,17 +74,17 @@ public class OrderDAOImpl implements OrderDAO{
 		
 		try {
 			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
-			ps = con.prepareStatement("UPDATE shop.order SET user_id=?, support_admin_id=?, ord_time=?, ord_status=?, ord_total=?, ship_method=?, ship_info=?, ship_fee=? WHERE ord_no=?");
+			ps = con.prepareStatement("UPDATE shop.order SET  ord_status=?, ord_total=?  WHERE ord_no=?");
 			
-			ps.setInt(1, order.getUser_id());
-			ps.setInt(2, order.getSupport_admin_id());
-			ps.setTimestamp(3, order.getOrd_time());
-			ps.setString(4, order.getOrd_status());
-			ps.setInt(5, order.getOrd_total());
-			ps.setString(6, order.getShip_method());
-			ps.setString(7, order.getShip_info());
-			ps.setInt(8, order.getShip_fee());
-			ps.setInt(9, order.getOrd_no());
+//			ps.setInt(1, order.getUser_id());
+//			ps.setInt(1, order.getSupport_admin_id());
+//			ps.setTimestamp(3, order.getOrd_time());
+			ps.setString(1, order.getOrd_status());
+			ps.setInt(2, order.getOrd_total());
+//			ps.setString(6, order.getShip_method());
+//			ps.setString(7, order.getShip_info());
+//			ps.setInt(8, order.getShip_fee());
+			ps.setInt(3, order.getOrd_no());
 			
 			ps.execute();
 			
