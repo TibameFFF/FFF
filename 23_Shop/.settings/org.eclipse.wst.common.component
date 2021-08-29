@@ -2,7 +2,28 @@
     <wb-module deploy-name="FFF">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/WebContent/WEB-INF/lib"/>
+        <wb-resource deploy-path="/WEB-INF/classes/" source-path="/ImportedClasses"/>
+        <dependent-module archiveName="jedis-2.9.0.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/jedis-2.9.0/jedis-2.9.0">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jstl.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/jstl/jstl">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="standard.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/standard/standard">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="json-20210307.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/json-20210307/json-20210307">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="javax.mail.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/javax.mail/javax.mail">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="javax.activation-1.2.0.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/javax.activation-1.2.0/javax.activation-1.2.0">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="gson-2.8.7.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/gson-2.8.7/gson-2.8.7">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="FFF"/>
         <property name="java-output-path" value="/FFF/build/classes"/>
     </wb-module>

@@ -231,6 +231,7 @@ public class OrderDAOImpl implements OrderDAO{
 				order.setShip_method(rs.getString("ship_method"));
 				order.setSupport_admin_id(rs.getInt("support_admin_id"));
 				order.setUser_id(rs.getInt("user_id"));
+				order.setOrd_no(rs.getInt("ord_no"));
 				
 				list.add(order);
 			}
@@ -291,6 +292,7 @@ public class OrderDAOImpl implements OrderDAO{
 				order.setShip_method(rs.getString("ship_method"));
 				order.setSupport_admin_id(rs.getInt("support_admin_id"));
 				order.setUser_id(rs.getInt("user_id"));
+				order.setOrd_no(rs.getInt("ord_no"));
 				
 				list.add(order);
 			}

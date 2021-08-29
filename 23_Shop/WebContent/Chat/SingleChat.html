@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SingleChat</title>
+    <link rel="stylesheet" href="style/style.css">
+
+</head>
+
+<body>
+
+    <div class="head_bar">
+        <span>好友列表</span>
+        <input type="text" id="search">
+    </div>
+
+
+    <main>
+        <div class=" friendList">
+            <!-- <div class="friendCard">
+                <img src="https://www.mirrormedia.com.tw/assets/images/20210811183042-492063c52c4c70e0ffe94db30f8395b8-mobile.jpg"
+                    alt="" srcset="">
+                <div>
+                    <p>群組名稱</p>
+                </div>
+            </div> -->
+
+            <!-- <div class="friendCard">
+                 <h4>群組名稱群組名稱群組名稱群組名稱群組名稱</h4> 
+                 <span class="last_message">xdddddddddasdasasfasfasfdddd</span> 
+            </div> -->
+
+
+
+        </div>
+
+        <div class="chatBox">
+            <div class="chat_area">
+                <!-- <div class="left">
+                    <div class="user_area">
+                        <img src="https://miro.medium.com/max/3600/0*qHkw6VLzIBcVwVRT" alt="">
+                    </div>
+                    <div class="message_area">
+                        <p class="message">kkkkkkkkkkkkkkkkkkkkkk</p>
+                        <p class="name">name</p>
+                        <p class="time">2/13 19:00</p>
+                    </div>
+                </div>
+                
+                <div class="right">
+                    <div class="message_area">
+                        <p class="message">messassagemsessagemseessasssagemseessasessasssage</p>
+                        <p class="time">2/13 19:00</p>
+                        <p class="read">已讀</p>
+                    </div>
+                    <div class="user_area">
+                        <img src="https://miro.medium.com/max/3600/0*qHkw6VLzIBcVwVRT" alt="">
+                    </div>
+                </div> -->
+
+                <h1>選擇一個好友開始聊天吧!</h1>
+
+
+            </div>
+
+
+            <div class="input_area">
+            	<label> + <input type="file" disabled accept="image/*" style="display:none"></label>
+                <input type="text" name="" id="" disabled>
+                <button disabled>送出</button>
+            </div>
+        </div>
+    </main>
+
+    <div id="userData" data-id="1" data-name="小明"></div>
+
+    <script src="vendors/jquery-3.6.0.min.js"></script>
+    <script>
+        //"/TogetherWS/自己ID"
+        var MyPoint = "/FriendChatWS/" + $("div#userData").attr("data-id");
+        var host = window.location.host;
+        var path = window.location.pathname;
+        var webCtx = path.substring(0, path.indexOf('/', 1));
+        var endPointURL = "ws://" + window.location.host + webCtx + MyPoint;
+        // ws://localhost:8081/WebSocketChatWeb/TogetherWS/james
+        var statusOutput = document.getElementById("statusOutput");
+        var webSocket;
+        var current_friend;
+        $(document).ready(function () {
+            connect(); //建立連線
+
+            //取得好友列表並列出
+            $.ajax({
+                url: "http://localhost:8081/FFF/ShowAllFriendServlet",
+                type: "GET",
+                data: { "id": $("div#userData").attr("data-id") },
+                dataType: "json",
+                success: function (data) {
+                    console.log(data);
+
+                    for (let i = 0; i < data.length; i++) {
+                        let str = `<div class="friendCard" id="${data[i]["friend_id"]}" data-index="">
+                            <h4>${data[i]["friend_id"]}</h4><span class="last_message">${data[i]["lastMessage"]}</span>`;
+
+                        //檢查有沒有未看過的訊息
+                        if (data[i]["notification"]) {
+                            str += `<span class="notification"></span>`;
+                        }
+
+                        str += "</div>"
+
+                        $("div.friendList").append(str);
+                    }
+                }
+            });
+
+            //點擊不同朋友時時切換websocket狀態
+            $("div.friendList").on("click", "div.friendCard", function () {
+
+                if (!$(this).hasClass("-on")) {
+
+                    current_friend = $(this).attr("id");//得到點擊朋友的id
+
+                    $("div.friendList div.friendCard").removeClass("-on");
+                    $(this).addClass("-on"); //換按鈕狀態
+
+                    $("div.chat_area h1").remove();
+                    $("div.input_area button, div.input_area input").attr("disabled", false);
+
+                    //如果有通知按鈕點擊後就清除
+                    if ($(this).children().hasClass("notification")) {
+                        $(this).children("span.notification").remove();
+
+                        //刪除通知
+                        let obj = { "myID": $("div#userData").attr("data-id"), "friendId": current_friend };
+                        $.ajax({
+                            url: "http://localhost:8081/FFF/DeleteNotificationServlet",
+                            type: "GET",
+                            dataType: "text",
+                            data: obj,
+                            success: function (data) {
+                                console.log(data);
+                            }
+                        });
+                    }
+
+                    //通知websocket改變目前聊天的朋友是誰
+                    let jsonObj = {
+                        "type": "change",
+                        "friendId": current_friend,
+                        "userid": $("div#userData").attr("data-id")
+                    };
+
+                    webSocket.send(JSON.stringify(jsonObj));//送出訊息到websocket
+                    $("div.chatBox div.right, div.chatBox div.left").remove();//清空聊天紀錄
+
+                    //取得歷史紀錄並列出
+                    $.ajax({
+                        url: "http://localhost:8081/FFF/GetFriendHistoryServlet",
+                        type: "GET",
+                        dataType: "json",
+                        data: { "myID": $("div#userData").attr("data-id"), "friendID": $(this).attr("id") },
+                        success: function (data) {
+                            //console.log(data);
+
+
+                            //顯示聊天紀錄
+                            for (let i = data.length - 1; i >= 0; i--) {
+                                //console.log(data[i]);
+                                let str = "";
+                                if (data[i]["who"] == 0) {
+                                    str = `<div class="right">
+							                    <div class="message_area">
+							                        <p class="message">${data[i]["message"]}</p>
+							                        <p class="time">${data[i]["date"]}</p>
+							                        <p class="read"></p>
+							                    </div>
+							                    <div class="user_area">
+							                        <img src="https://miro.medium.com/max/3600/0*qHkw6VLzIBcVwVRT" alt="">
+							                    </div>
+							                </div>`;
+                                } else {
+                                    str = `<div class="left">
+							                    <div class="user_area">
+							                        <img src="https://miro.medium.com/max/3600/0*qHkw6VLzIBcVwVRT" alt="">
+							                    </div>
+							                    <div class="message_area">
+							                        <p class="message">${data[i]["message"]}</p>
+							                        <p class="name">${data[i]["friendName"]}</p>
+							                        <p class="time">${data[i]["date"]}</p>
+							                    </div>
+							                </div>`;
+                                }
+
+                                $("div.chat_area").append(str);
+
+                            }
+
+                            //視窗滑到最下面
+                            $("div.chat_area").scrollTop($("div.chat_area")[0].scrollHeight);
+
+                        }
+                    });
+                }
+            });
+
+          //送出圖片
+			$("input[type='file']").on("change", function(e){
+				let reader = new FileReader(); 
+				reader.readAsDataURL(this.files[0]); 
+				
+				reader.addEventListener("load", function () {
+				  
+					let jsonObj = {
+		                    "type": "message",
+		                    "image":true,
+		                    "friendId": current_friend,
+		                    "id": $("div#userData").attr("data-id"),
+		                    "myName": $("div#userData").attr("data-name"),
+		                    "message": `<img src='${reader.result}' />`
+		                };
+					let time = getTime();
+	            	//自己這邊顯示自己的訊息
+	            	//更新最後訊息
+	                $("div.friendCard#"+current_friend+" span.last_message").hide();
+	                $("div.friendCard#"+current_friend+" span.last_message").text("圖片");
+	                $("div.friendCard#"+current_friend+" span.last_message").fadeIn();
+	                let input = `<img src='${reader.result}' />`;
+	                $("div.chat_area").append(`<div class="right">
+									                <div class="message_area">
+									                    <p class="message">${input}</p>
+									                    <p class="time">${time}</p>
+									                </div>
+									                <div class="user_area">
+									                    <img src="https://miro.medium.com/max/3600/0*qHkw6VLzIBcVwVRT" alt="">
+									                </div>
+									            </div>`);
+	                //視窗滑到最下面
+	                $("div.chat_area").scrollTop($("div.chat_area")[0].scrollHeight);
+	                
+	                webSocket.send(JSON.stringify(jsonObj));//送出訊息到websocket
+					
+				});
+			});
+
+            
+
+            //點擊送出鍵時送出訊息
+            $("div.input_area button").on("click", function () {
+                //列出傳送資訊
+                let jsonObj = {
+                    "type": "message",
+                    "friendId": current_friend,
+                    "id": $("div#userData").attr("data-id"),
+                    "myName": $("div#userData").attr("data-name"),
+                    "message": $("div.input_area input[type='text']").val()
+                };
+
+                let time = getTime();
+
+                //自己這邊顯示自己的訊息
+                let input = $("div.input_area input[type='text']").val();
+                //更新最後訊息
+                $("div.friendCard#"+current_friend+" span.last_message").hide();
+                $("div.friendCard#"+current_friend+" span.last_message").text(input);
+                $("div.friendCard#"+current_friend+" span.last_message").fadeIn();
+                $("div.chat_area").append(`<div class="right">
+							                    <div class="message_area">
+							                        <p class="message">${input}</p>
+							                        <p class="time">${time}</p>
+							                    </div>
+							                    <div class="user_area">
+							                        <img src="https://miro.medium.com/max/3600/0*qHkw6VLzIBcVwVRT" alt="">
+							                    </div>
+							                </div>`);
+                
+                
+                $("div.input_area input[type='text']").val("");
+                //視窗滑到最下面
+                $("div.chat_area").scrollTop($("div.chat_area")[0].scrollHeight);
+
+                webSocket.send(JSON.stringify(jsonObj));//送出訊息到websocket
+
+            })
+
+
+
+            //好友列表及時搜尋
+            $("input#search").on("input", function () {
+                //console.log($(this).val());
+                $.each($("div.friendCard"), function (index, item) {
+                    if ($(item).attr("data-index").search($("input#search").val().toLowerCase()) >= 0) {
+                        $(item).show();
+                    } else {
+                        $(item).hide();
+                    }
+                    //$("input#search").val();
+                });
+
+            });
+
+
+        });
+
+        function connect() {
+            webSocket = new WebSocket(endPointURL); //建立連線
+
+            //	 	連線時要做的事情
+            webSocket.onopen = function (event) {
+                console.log("WebSocket Connected");
+            };
+
+            // 		收到websocket傳來的訊息要做的事情
+            webSocket.onmessage = function (event) {
+
+
+
+                var jsonObj = JSON.parse(event.data);
+//                 console.log(jsonObj);
+
+                //顯示未讀通知
+                if (jsonObj["type"] == "notiifcation") {
+                    //                     console.log(jsonObj["id"]);
+                    $.each($("div.friendCard"), function (index, item) {
+                        if ($(item).attr("id") == jsonObj["id"]) {
+                            $(item).append('<span class="notification"></span>');
+                            $(item).find("span.last_message").hide();
+                            
+                            if(jsonObj["message"].includes("<img")){
+                            	$(item).find("span.last_message").text("圖片");                            	
+                            } else{
+                            	$(item).find("span.last_message").text(jsonObj["message"]);                            	                            	
+                            }
+                            $(item).find("span.last_message").fadeIn();
+                        }
+                    });
+                    return;
+                }
+
+                //接收訊息並顯示在頁面上
+                let time = getTime();
+              //更新最後訊息
+                $("div.friendCard#"+current_friend+" span.last_message").hide();
+                if(jsonObj["image"]){
+                	$("div.friendCard#"+current_friend+" span.last_message").text("圖片");                            	                            	
+                }else{
+                	$("div.friendCard#"+current_friend+" span.last_message").text(jsonObj["message"]);                            	                            		
+                }
+                
+                $("div.friendCard#"+current_friend+" span.last_message").fadeIn();
+                let message = `<div class="left">
+				                    <div class="user_area">
+				                        <img src="https://miro.medium.com/max/3600/0*qHkw6VLzIBcVwVRT" alt="">
+				                    </div>
+				                    <div class="message_area">
+				                        <p class="message">${jsonObj["message"]}</p>
+				                        <p class="name">${jsonObj["id"]}</p>
+				                        <p class="time">${time}</p>
+				                    </div>
+				                </div>`;
+                $("div.chat_area").append(message);
+                $("div.chat_area").scrollTop($("div.chat_area")[0].scrollHeight);
+            };
+
+            // 		中斷連線要做的事情
+            webSocket.onclose = function (event) {
+                console.log("WebSocket Disconnected");
+            };
+        }
+
+        function disconnect() {
+            if (webSocket != undefined) {
+                webSocket.close();
+            }
+        }
+
+        function getTime() {
+            let now = new Date();
+
+            let month = now.getMonth() + 1;
+            let date = now.getDate();
+            let hour = now.getHours();
+            let minute = now.getMinutes();
+            if (month.toString().length == 1) {
+                month = '0' + month;
+            }
+            if (date.toString().length == 1) {
+                date = '0' + date;
+            }
+            if (hour.toString().length == 1) {
+                hour = '0' + hour;
+            }
+            if (minute.toString().length == 1) {
+                minute = '0' + minute;
+            }
+            let time = month + "/" + date + " " + hour + ":" + minute;
+            return time;
+        }
+
+    </script>
+
+</body>
+
+</html>
