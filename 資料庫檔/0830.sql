@@ -463,7 +463,7 @@ CREATE TABLE IF NOT EXISTS `back`.`report` (
   `object_id` INT NOT NULL,
   `report_type` INT NULL,
   `report_status` INT NOT NULL DEFAULT 1,
-  `report_description` VARCHAR(45) NULL,
+  `report_description` VARCHAR(120) NULL,
   `report_time` DATETIME NOT NULL,
   `excute_time` DATETIME NULL,
   PRIMARY KEY (`report_no`),
