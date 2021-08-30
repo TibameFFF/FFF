@@ -9,12 +9,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 import com.shop.model.Order;
 import com.shop.model.Prod;
@@ -123,10 +126,17 @@ public class MakeOrderServlet extends HttpServlet {
 		str.append(name).append(",").append(address).append(",").append(phone).append(",").append(email);
 
 		// 送出訂單，會員ID和客服人員ID都先寫死為1
+		DataSource ds = null;
+		try {
+			Context ctx = new javax.naming.InitialContext(); //可放實體變數
+			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/Shop");
+		} catch (NamingException e2) {
+			e2.printStackTrace();
+		}
 		Connection con = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			con.setAutoCommit(false);
 			
 			OrderService orderService = new OrderService();

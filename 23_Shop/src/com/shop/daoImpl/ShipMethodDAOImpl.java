@@ -9,20 +9,36 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
 import com.shop.dao.ShipMethodDAO;
 import com.shop.model.ShipMethod;
 import com.shop.util.Util;
 
 
 public class ShipMethodDAOImpl implements ShipMethodDAO{
+	static Context ctx;
+	static DataSource ds;
 
+	
+	static {
+		try {
+			ctx = new javax.naming.InitialContext();
+			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/Shop"); //前兩行可包在static{}或init()裡面
+		
+		} catch (NamingException e) {
+			e.printStackTrace();
+		} 
+	}
 	@Override
 	public void add(ShipMethod shipMethod) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("INSERT INTO shop.ship_method(ship_no, ship_name, ship_fee) VALUES(?, ?, ?)");
 			
 			ps.setInt(1, shipMethod.getShip_no());
@@ -61,7 +77,7 @@ public class ShipMethodDAOImpl implements ShipMethodDAO{
 		PreparedStatement ps = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("UPDATE shop.ship_method SET ship_name=?, ship_fee=? WHERE ship_no=?");
 			
 			ps.setString(1, shipMethod.getShip_name());
@@ -100,7 +116,7 @@ public class ShipMethodDAOImpl implements ShipMethodDAO{
 		PreparedStatement ps = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("DELETE FROM shop.ship_method WHERE ship_no=?");
 			
 			ps.setInt(1, id);
@@ -138,7 +154,7 @@ public class ShipMethodDAOImpl implements ShipMethodDAO{
 		ResultSet rs = null;
 		ShipMethod shipMethod = new ShipMethod();
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("SELECT * FROM shop.ship_method WHERE ship_no=?");
 			
 			ps.setInt(1, id);
@@ -190,7 +206,7 @@ public class ShipMethodDAOImpl implements ShipMethodDAO{
 		List<ShipMethod> list = new ArrayList<>();
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			st = con.createStatement();
 			rs=st.executeQuery("SELECT * FROM shop.ship_method");
 			

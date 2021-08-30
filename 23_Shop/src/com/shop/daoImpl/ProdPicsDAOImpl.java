@@ -8,6 +8,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
 import com.shop.dao.ProdPicsDAO;
 import com.shop.model.EvalPic;
 import com.shop.model.Prod;
@@ -16,14 +20,26 @@ import com.shop.util.Util;
 
 
 public class ProdPicsDAOImpl implements ProdPicsDAO{
+	static Context ctx;
+	static DataSource ds;
 
+	
+	static {
+		try {
+			ctx = new javax.naming.InitialContext();
+			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/Shop"); //前兩行可包在static{}或init()裡面
+		
+		} catch (NamingException e) {
+			e.printStackTrace();
+		} 
+	}
 	@Override
 	public void add(ProdPics prodPics) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("INSERT INTO shop.prod_pics(prod_id, prod_pic) VALUES(?, ?)");
 			
 			ps.setInt(1, prodPics.getProd_id());
@@ -61,7 +77,7 @@ public class ProdPicsDAOImpl implements ProdPicsDAO{
 		PreparedStatement ps = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("UPDATE shop.prod_pics SET prod_id=? prod_pic=? WHERE prod_pic_id=?");
 			
 			ps.setInt(1, prodPics.getProd_id());
@@ -99,7 +115,7 @@ public class ProdPicsDAOImpl implements ProdPicsDAO{
 		PreparedStatement ps = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("DELETE FROM shop.prod_pics WHERE prod_pic_id=?");
 			
 			ps.setInt(1, id);
@@ -137,7 +153,7 @@ public class ProdPicsDAOImpl implements ProdPicsDAO{
 		ResultSet rs = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("SELECT * FROM shop.prod_pics WHERE prod_id=?");
 			ps.setInt(1, id);
 			
@@ -195,7 +211,7 @@ public class ProdPicsDAOImpl implements ProdPicsDAO{
 		ResultSet rs = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("SELECT * FROM shop.prod_pics WHERE prod_id=?");
 			ps.setInt(1, id);
 			

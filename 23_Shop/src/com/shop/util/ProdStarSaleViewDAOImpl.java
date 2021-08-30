@@ -8,9 +8,25 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
 
 public class ProdStarSaleViewDAOImpl implements ProdStarSaleViewDAO {
+	static Context ctx;
+	static DataSource ds;
 
+	
+	static {
+		try {
+			ctx = new javax.naming.InitialContext();
+			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/Shop"); //前兩行可包在static{}或init()裡面
+		
+		} catch (NamingException e) {
+			e.printStackTrace();
+		} 
+	}
 	@Override
 	public List<ProdStarSaleView> findByProdID(int id) {
 		Connection con = null;
@@ -19,7 +35,7 @@ public class ProdStarSaleViewDAOImpl implements ProdStarSaleViewDAO {
 		ResultSet rs = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("SELECT ps.prod_id, ps.prod_spec_id, op.eval_star, op.prod_num\r\n" + 
 					"FROM SHOP.order_prod op \r\n" + 
 					"	JOIN SHOP.prod_spec ps ON op.prod_spec_id = ps.prod_spec_id\r\n" + 
@@ -83,7 +99,7 @@ public class ProdStarSaleViewDAOImpl implements ProdStarSaleViewDAO {
 		ResultSet rs = null;
 
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement(
 					"SELECT ps.prod_id, COUNT(op.eval_star) FROM order_prod op JOIN prod_spec ps ON ps.prod_spec_id = op.prod_spec_id WHERE op.eval_star != 0 AND ps.prod_id = ? GROUP BY ps.prod_id");
 			ps.setInt(1, id);
@@ -134,7 +150,7 @@ public class ProdStarSaleViewDAOImpl implements ProdStarSaleViewDAO {
 		ResultSet rs = null;
 
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement(
 					"SELECT ps.prod_id, SUM(op.prod_num) FROM order_prod op JOIN prod_spec ps ON ps.prod_spec_id = op.prod_spec_id WHERE ps.prod_id= ? GROUP BY ps.prod_id");
 			ps.setInt(1, id);
@@ -185,7 +201,7 @@ public class ProdStarSaleViewDAOImpl implements ProdStarSaleViewDAO {
 		ResultSet rs = null;
 
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement(
 					"SELECT ps.prod_id, AVG(op.eval_star) FROM order_prod op JOIN prod_spec ps ON ps.prod_spec_id = op.prod_spec_id WHERE op.eval_star != 0 AND ps.prod_id = ? GROUP BY ps.prod_id");
 			ps.setInt(1, id);

@@ -8,6 +8,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
 import com.shop.dao.EvalPicDAO;
 import com.shop.model.EvalPic;
 import com.shop.model.ProdSpec;
@@ -15,14 +19,26 @@ import com.shop.util.Util;
 
 
 public class EvalPicDAOImpl implements EvalPicDAO{
+	static Context ctx;
+	static DataSource ds;
 
+	
+	static {
+		try {
+			ctx = new javax.naming.InitialContext();
+			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/Shop"); //前兩行可包在static{}或init()裡面
+		
+		} catch (NamingException e) {
+			e.printStackTrace();
+		} 
+	}
 	@Override
 	public void add(EvalPic evalPic) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("INSERT INTO shop.eval_pic(ord_prod_id, eval_pic) VALUES(?, ?)");
 			
 			ps.setInt(1, evalPic.getOrd_prod_id());
@@ -62,7 +78,7 @@ public class EvalPicDAOImpl implements EvalPicDAO{
 		ResultSet rs = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("SELECT * FROM shop.eval_pic WHERE eval_pic_id=?");
 			ps.setInt(1, id);
 			

@@ -8,6 +8,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
 import com.shop.dao.OrderProdDAO;
 import com.shop.model.OrderProd;
 import com.shop.model.ProdSpec;
@@ -15,14 +19,26 @@ import com.shop.util.Util;
 
 
 public class OrderProdDAOImpl implements OrderProdDAO{
+	static Context ctx;
+	static DataSource ds;
 
+	
+	static {
+		try {
+			ctx = new javax.naming.InitialContext();
+			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/Shop"); //前兩行可包在static{}或init()裡面
+		
+		} catch (NamingException e) {
+			e.printStackTrace();
+		} 
+	}
 	@Override
 	public void add(Connection connection, OrderProd orderProd) throws SQLException{
 		Connection con = connection;
 		PreparedStatement ps = null;
 		
 		try {
-//			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+//			con = ds.getConnection();
 			ps = con.prepareStatement("INSERT INTO shop.order_prod(ord_no, prod_spec_id, hist_prod_name, hist_prod_spec, hist_prod_price, hist_prod_pic, prod_num) VALUES(?, ?, ?, ?,?,?,?)");
 			
 			ps.setInt(1, orderProd.getOrd_no());
@@ -65,7 +81,7 @@ public class OrderProdDAOImpl implements OrderProdDAO{
 		PreparedStatement ps = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("UPDATE shop.order_prod SET eval_star=?, eval_text=? WHERE ord_prod_id=?");
 			
 			ps.setInt(1, orderProd.getEval_star());
@@ -106,7 +122,7 @@ public class OrderProdDAOImpl implements OrderProdDAO{
 		ResultSet rs = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("SELECT * FROM shop.order_prod WHERE ord_no=?");
 			ps.setInt(1, ordNo);
 			
@@ -178,7 +194,7 @@ public class OrderProdDAOImpl implements OrderProdDAO{
 		ResultSet rs = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("SELECT * FROM shop.order_prod WHERE prod_spec_id=?");
 			ps.setInt(1, specID);
 			

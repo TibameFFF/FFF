@@ -19,8 +19,18 @@ import com.shop.util.Util;
 
 
 public class FavProdDAOImpl implements FavProdDAO {
+	static Context ctx;
+	static DataSource ds;
+
+	
 	static {
+		try {
+			ctx = new javax.naming.InitialContext();
+			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/Shop"); //前兩行可包在static{}或init()裡面
 		
+		} catch (NamingException e) {
+			e.printStackTrace();
+		} 
 	}
 	@Override
 	public void add(FavProd favProd) {
@@ -28,7 +38,7 @@ public class FavProdDAOImpl implements FavProdDAO {
 		PreparedStatement ps = null;
 
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("INSERT INTO shop.fav_prod (user_id,prod_id) VALUES(?,?)");
 
 			ps.setInt(1, favProd.getUser_id());
@@ -65,7 +75,7 @@ public class FavProdDAOImpl implements FavProdDAO {
 		PreparedStatement ps = null;
 
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("DELETE FROM shop.fav_prod WHERE user_id = ? AND prod_id = ?");
 
 			ps.setInt(1, favProd.getUser_id());
@@ -104,7 +114,7 @@ public class FavProdDAOImpl implements FavProdDAO {
 
 		List<FavProd> list = new ArrayList<>();
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("SELECT * FROM shop.fav_prod WHERE user_id = ?");
 
 			ps.setInt(1, id);

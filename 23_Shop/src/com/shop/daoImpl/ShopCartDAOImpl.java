@@ -4,20 +4,36 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
 import com.shop.dao.ShopCartDAO;
 import com.shop.model.ShopCart;
 import com.shop.util.Util;
 
 
 public class ShopCartDAOImpl implements ShopCartDAO {
+	static Context ctx;
+	static DataSource ds;
 
+	
+	static {
+		try {
+			ctx = new javax.naming.InitialContext();
+			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/Shop"); //前兩行可包在static{}或init()裡面
+		
+		} catch (NamingException e) {
+			e.printStackTrace();
+		} 
+	}
 	@Override
 	public void add(ShopCart shopCart) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("INSERT INTO shop.shop_cart(user_id, prod_spec_id, prod_num) VALUES(?, ?, ?)");
 			
 			ps.setInt(1, shopCart.getUser_id());
@@ -56,7 +72,7 @@ public class ShopCartDAOImpl implements ShopCartDAO {
 		PreparedStatement ps = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("DELETE FROM  shop.shop_cart WHERE user_id = ? AND prod_spec_id = ?");
 			
 			ps.setInt(1, shopCart.getUser_id());
@@ -97,7 +113,7 @@ public class ShopCartDAOImpl implements ShopCartDAO {
 		List<ShopCart> list = new ArrayList<>();
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("SELECT * FROM  shop.shop_cart WHERE user_id = ?");
 			ps.setInt(1, id);
 			rs = ps.executeQuery();
@@ -148,7 +164,7 @@ public class ShopCartDAOImpl implements ShopCartDAO {
 		PreparedStatement ps = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("UPDATE shop_cart SET prod_num = ? WHERE prod_spec_id = ? AND user_id = ?");
 			
 			ps.setInt(1, shopCart.getProd_num());
