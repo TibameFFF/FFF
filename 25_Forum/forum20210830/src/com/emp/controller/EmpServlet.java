@@ -14,7 +14,7 @@ public class EmpServlet extends HttpServlet {
 			throws ServletException, IOException {
 		doPost(req, res);
 	}
-
+//sdfghjk
 	public void doPost(HttpServletRequest req, HttpServletResponse res)
 			throws ServletException, IOException {
 
@@ -22,22 +22,22 @@ public class EmpServlet extends HttpServlet {
 		String action = req.getParameter("action");
 
 		if ("getAll".equals(action)) {
-			/***************************¶}©l¬d¸ß¸ê®Æ ****************************************/
+			/***************************ï¿½}ï¿½lï¿½dï¿½ß¸ï¿½ï¿½ ****************************************/
 			EmpDAO dao = new EmpDAO();
 			List<EmpVO> list = dao.getAll();
 
-			/***************************¬d¸ß§¹¦¨,·Ç³ÆÂà¥æ(Send the Success view)*************/
+			/***************************ï¿½dï¿½ß§ï¿½ï¿½ï¿½,ï¿½Ç³ï¿½ï¿½ï¿½ï¿½(Send the Success view)*************/
 			HttpSession session = req.getSession();
-			session.setAttribute("list", list);    // ¸ê®Æ®w¨ú¥Xªºlistª«¥ó,¦s¤Jsession
+			session.setAttribute("list", list);    // ï¿½ï¿½Æ®wï¿½ï¿½ï¿½Xï¿½ï¿½listï¿½ï¿½ï¿½ï¿½,ï¿½sï¿½Jsession
 			// Send the Success view
 			String url = "/emp/listAllEmp2_getFromSession.jsp";
-			RequestDispatcher successView = req.getRequestDispatcher(url);// ¦¨¥\Âà¥ælistAllEmp2_getFromSession.jsp
+			RequestDispatcher successView = req.getRequestDispatcher(url);// ï¿½ï¿½ï¿½\ï¿½ï¿½ï¿½listAllEmp2_getFromSession.jsp
 			successView.forward(req, res);
 			return;
 		}
 
 
-		if ("getOne_For_Display".equals(action)) { // ¨Ó¦Ûselect_page.jspªº½Ð¨D
+		if ("getOne_For_Display".equals(action)) { // ï¿½Ó¦ï¿½select_page.jspï¿½ï¿½ï¿½Ð¨D
 
 			List<String> errorMsgs = new LinkedList<String>();
 			// Store this set in the request scope, in case we need to
@@ -45,56 +45,56 @@ public class EmpServlet extends HttpServlet {
 			req.setAttribute("errorMsgs", errorMsgs);
 
 			try {
-				/***************************1.±µ¦¬½Ð¨D°Ñ¼Æ - ¿é¤J®æ¦¡ªº¿ù»~³B²z**********************/
+				/***************************1.ï¿½ï¿½ï¿½ï¿½ï¿½Ð¨Dï¿½Ñ¼ï¿½ - ï¿½ï¿½Jï¿½æ¦¡ï¿½ï¿½ï¿½ï¿½ï¿½~ï¿½Bï¿½z**********************/
 				String str = req.getParameter("empno");
 				if (str == null || (str.trim()).length() == 0) {
-					errorMsgs.add("½Ð¿é¤J­û¤u½s¸¹");
+					errorMsgs.add("ï¿½Ð¿ï¿½Jï¿½ï¿½ï¿½uï¿½sï¿½ï¿½");
 				}
 				// Send the use back to the form, if there were errors
 				if (!errorMsgs.isEmpty()) {
 					RequestDispatcher failureView = req
 							.getRequestDispatcher("/emp/select_page.jsp");
 					failureView.forward(req, res);
-					return;//µ{¦¡¤¤Â_
+					return;//ï¿½{ï¿½ï¿½ï¿½ï¿½ï¿½_
 				}
 				
 				Integer empno = null;
 				try {
 					empno = new Integer(str);
 				} catch (Exception e) {
-					errorMsgs.add("­û¤u½s¸¹®æ¦¡¤£¥¿½T");
+					errorMsgs.add("ï¿½ï¿½ï¿½uï¿½sï¿½ï¿½ï¿½æ¦¡ï¿½ï¿½ï¿½ï¿½ï¿½T");
 				}
 				// Send the use back to the form, if there were errors
 				if (!errorMsgs.isEmpty()) {
 					RequestDispatcher failureView = req
 							.getRequestDispatcher("/emp/select_page.jsp");
 					failureView.forward(req, res);
-					return;//µ{¦¡¤¤Â_
+					return;//ï¿½{ï¿½ï¿½ï¿½ï¿½ï¿½_
 				}
 				
-				/***************************2.¶}©l¬d¸ß¸ê®Æ*****************************************/
+				/***************************2.ï¿½}ï¿½lï¿½dï¿½ß¸ï¿½ï¿½*****************************************/
 				EmpDAO dao = new EmpDAO();
 				EmpVO empVO = dao.findByPrimaryKey(empno);
 				if (empVO == null) {
-					errorMsgs.add("¬dµL¸ê®Æ");
+					errorMsgs.add("ï¿½dï¿½Lï¿½ï¿½ï¿½");
 				}
 				// Send the use back to the form, if there were errors
 				if (!errorMsgs.isEmpty()) {
 					RequestDispatcher failureView = req
 							.getRequestDispatcher("/emp/select_page.jsp");
 					failureView.forward(req, res);
-					return;//µ{¦¡¤¤Â_
+					return;//ï¿½{ï¿½ï¿½ï¿½ï¿½ï¿½_
 				}
 				
-				/***************************3.¬d¸ß§¹¦¨,·Ç³ÆÂà¥æ(Send the Success view)*************/
-				req.setAttribute("empVO", empVO); // ¸ê®Æ®w¨ú¥XªºempVOª«¥ó,¦s¤Jreq
+				/***************************3.ï¿½dï¿½ß§ï¿½ï¿½ï¿½,ï¿½Ç³ï¿½ï¿½ï¿½ï¿½(Send the Success view)*************/
+				req.setAttribute("empVO", empVO); // ï¿½ï¿½Æ®wï¿½ï¿½ï¿½Xï¿½ï¿½empVOï¿½ï¿½ï¿½ï¿½,ï¿½sï¿½Jreq
 				String url = "/emp/listOneEmp.jsp";
-				RequestDispatcher successView = req.getRequestDispatcher(url); // ¦¨¥\Âà¥æ listOneEmp.jsp
+				RequestDispatcher successView = req.getRequestDispatcher(url); // ï¿½ï¿½ï¿½\ï¿½ï¿½ï¿½ listOneEmp.jsp
 				successView.forward(req, res);
 
-				/***************************¨ä¥L¥i¯àªº¿ù»~³B²z*************************************/
+				/***************************ï¿½ï¿½Lï¿½iï¿½àªºï¿½ï¿½ï¿½~ï¿½Bï¿½z*************************************/
 			} catch (Exception e) {
-				errorMsgs.add("µLªk¨ú±o¸ê®Æ:" + e.getMessage());
+				errorMsgs.add("ï¿½Lï¿½kï¿½ï¿½ï¿½oï¿½ï¿½ï¿½:" + e.getMessage());
 				RequestDispatcher failureView = req
 						.getRequestDispatcher("/emp/select_page.jsp");
 				failureView.forward(req, res);
