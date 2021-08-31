@@ -3,6 +3,13 @@
 	<name>FFF</name>
 	<comment></comment>
 	<projects>
+		<project>jedis-2.9.0</project>
+		<project>jstl</project>
+		<project>standard</project>
+		<project>json-20210307</project>
+		<project>javax.mail</project>
+		<project>javax.activation-1.2.0</project>
+		<project>gson-2.8.7</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

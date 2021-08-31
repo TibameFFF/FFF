@@ -8,13 +8,29 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
 import com.shop.dao.ProdTypeDAO;
 import com.shop.model.ProdType;
 import com.shop.util.Util;
 
 
 public class ProdTypeDAOImpl implements ProdTypeDAO {
+	static Context ctx;
+	static DataSource ds;
 
+	
+	static {
+		try {
+			ctx = new javax.naming.InitialContext();
+			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/Shop"); //前兩行可包在static{}或init()裡面
+		
+		} catch (NamingException e) {
+			e.printStackTrace();
+		} 
+	}
 
 	@Override
 	public List<ProdType> getAll() {
@@ -25,7 +41,7 @@ public class ProdTypeDAOImpl implements ProdTypeDAO {
 		ResultSet rs = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			st = con.createStatement();
 			rs = st.executeQuery("SELECT * FROM shop.prod_type");
 			

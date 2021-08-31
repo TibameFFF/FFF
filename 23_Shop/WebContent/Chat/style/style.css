@@ -1,0 +1,297 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+div.head_bar {
+  background-color: #b7c6db;
+  padding: 10px 20px;
+  position: relative;
+}
+
+div.head_bar span {
+  color: #6b8bb2;
+  font-size: 1.5rem;
+  margin-right: 10px;
+}
+
+div.head_bar input {
+  height: 1.5rem;
+  position: relative;
+  bottom: 4px;
+  border-radius: 4px;
+  border: 1px solid black;
+}
+
+div.head_bar a button{
+  position: absolute;
+  font-weight: bold;
+  right:20px;
+  top:13px;
+  width: 100px;
+  background-color: white;
+  border:1px solid gray;
+  color: #6b8bb2;
+  padding:5px;
+  border-radius: 10px;
+}
+
+body {
+  background-color: #F6EFE5;
+}
+
+main {
+  display: flex;
+  flex-direction: row;
+  margin: 20px 4%;
+  justify-content: center;
+}
+
+div.friendList {
+  background-color: white;
+  width: 25%;
+  height: 65vh;
+  border-radius: 20px;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+div.chatBox {
+  height: 65vh;
+  width: 70%;
+  background-color: #ebeaea;
+  margin-left: 20px;
+  border-radius: 20px;
+
+}
+
+img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+div.friendList img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+}
+
+div.friendCard {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 10px;
+  position: relative;
+  align-items:baseline;
+}
+
+div.friendCard:hover{
+  background-color: blanchedalmond;
+}
+
+
+
+div.friendCard div {
+  margin-top: 15px;
+
+}
+
+div.friendCard div p {
+  font-size: 30px;
+}
+
+div.friendCard h4{
+  text-overflow: ellipsis;
+  text-align: center;
+  white-space: nowrap; 
+  overflow: hidden;
+}
+
+div.friendCard span{
+  font-size: 10px;
+  display: inline-block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+div.friendCard h4, div.friendCard span.last_message{
+  max-width: 50%;
+}
+
+
+div.chat_area {
+  width: 100%;
+  height: 85%;
+  padding: 10px;
+  overflow-x: auto;
+  position: relative;
+}
+
+div.input_area {
+  width: 100%;
+  height: 15%;
+  background-color: #a1c2e7;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  padding: 1.5% 0px;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+div.input_area input {
+  width: 60%;
+  height: 100%;
+  border: none;
+  border-radius: 5px;
+  padding-left: 10px;
+}
+
+div.input_area label{
+  background-color: cornsilk;
+  padding: 5px 10px;
+  font-size: 20px;
+  border-radius: 10px;
+}
+
+div.input_area button {
+  width: 10%;
+  background-color: #6f9bca;
+  border: 1px solid #667b94;
+  color: blanchedalmond;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
+
+
+.-on, .-on:hover{
+  background-color:rgb(175, 193, 226) !important;
+  cursor: inherit;
+}
+
+div.chat_area h1{
+
+    margin: 15% auto;
+    text-align: center;
+}
+
+div.friendCard span.notification{
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  right: 10px;
+  top: 40%;
+}
+
+
+div.left{
+  position: relative;
+}
+
+div.left div.user_area img, div.right div.user_area img{
+  width:30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+div.left, div.right{
+  display: flex;
+  margin-bottom: 5px;
+}
+
+div.left div.user_area{
+  align-content: center;
+}
+
+div.left div.message_area{
+  margin-left: 10px;
+  max-width: 60%;
+}
+
+div.left div.message_area p.message{
+  background-color: white;
+  padding: 5px 10px;
+  border-radius: 10px;
+  overflow-wrap: break-word;
+}
+
+div.left div.message_area p.time{
+  font-size: 10px;
+  float: right;
+  margin-top: 3px;
+}
+
+div.left div.message_area p.name{
+  float: left;
+  clear: both;
+  margin-right: 5px;
+}
+
+p.read{
+  font-size: 8px;
+  color: gray;
+  padding-top: 2px;
+  float: left;
+}
+
+div.right{
+  position: relative;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+div.right div.message_area p.message{
+  background-color: white;
+  padding: 5px 10px;
+  border-radius: 10px;
+  overflow-wrap: break-word;
+  margin-right: 10px;
+  max-width: 100%;
+  float: right;
+}
+
+div.right div.message_area{
+  max-width: 50%;
+}
+div.right div.message_area p.time{
+  float: right;
+  clear: both;
+  font-size: 8px;
+  margin-top: 3px;
+  margin-right: 10px;
+}
+
+div.right div.message_area p.message::after{
+  content: '';
+	position: absolute;
+  top:35px;
+	right:53px;
+	border: 8px solid transparent;
+	border-left-color: white;
+	border-right: 0;
+	margin-top: -20px;
+	margin-right: -20px;
+	border-top: 0;
+}
+
+div.left div.message_area p.message::after{
+  content: '';
+	position: absolute;
+	top:15px;
+	left: 53px;
+	border: 8px solid transparent;
+	border-top-color: white;
+	border-right: 0;
+	margin-left: -20px;
+	margin-bottom: -20px;
+}
+
+
+
+

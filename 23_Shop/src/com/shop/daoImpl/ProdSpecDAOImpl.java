@@ -8,20 +8,36 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
 import com.shop.dao.ProdSpecDAO;
 import com.shop.model.ProdSpec;
 import com.shop.util.Util;
 
 
 public class ProdSpecDAOImpl implements ProdSpecDAO {
+	static Context ctx;
+	static DataSource ds;
 
+	
+	static {
+		try {
+			ctx = new javax.naming.InitialContext();
+			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/Shop"); //前兩行可包在static{}或init()裡面
+		
+		} catch (NamingException e) {
+			e.printStackTrace();
+		} 
+	}
 	@Override
 	public void add(ProdSpec prodSpec) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("INSERT INTO shop.prod_spec(prod_id, spec_name, stock, prod_price) VALUES(?, ?, ?, ?)");
 			
 			ps.setInt(1, prodSpec.getProd_id());
@@ -62,7 +78,7 @@ public class ProdSpecDAOImpl implements ProdSpecDAO {
 		PreparedStatement ps = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("UPDATE shop.prod_spec SET prod_id =? , spec_name =?, stock =?, prod_price=? WHERE prod_spec_id=?");
 			
 			ps.setInt(1, prodSpec.getProd_id());
@@ -103,7 +119,7 @@ public class ProdSpecDAOImpl implements ProdSpecDAO {
 		PreparedStatement ps = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("DELETE FROM shop.prod_spec WHERE prod_spec_id=?");
 			
 			
@@ -143,7 +159,7 @@ public class ProdSpecDAOImpl implements ProdSpecDAO {
 		ResultSet rs = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("SELECT * FROM shop.prod_spec WHERE prod_spec_id=?");
 			ps.setInt(1, id);
 			
@@ -197,7 +213,7 @@ public class ProdSpecDAOImpl implements ProdSpecDAO {
 		ResultSet rs = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("SELECT * FROM shop.prod_spec WHERE prod_id=?");
 			ps.setInt(1, id);
 			

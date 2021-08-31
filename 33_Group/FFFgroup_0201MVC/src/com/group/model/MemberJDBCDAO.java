@@ -1,0 +1,491 @@
+package com.group.model;
+
+import java.util.*;
+import java.sql.*;
+
+
+public class MemberJDBCDAO implements MemberDAO_interface {
+	String driver = "com.mysql.cj.jdbc.Driver";
+	String url = "jdbc:mysql://localhost:3306/group1?serverTimezone=Asia/Taipei";
+	String userid = "root";
+	String passwd = "123";
+
+	private static final String INSERT_STMT = 
+		"INSERT INTO group1.member (role, user_id, g_no, join_time) VALUES (?, ?, ?, NOW())";
+	private static final String GET_ALL_STMT = 
+		"SELECT join_no, role, user_id, g_no, join_time FROM group1.member order by join_no";
+	private static final String GET_ONE_STMT = 
+		"SELECT join_no, role, user_id, g_no, join_time FROM group1.member where join_no= ?";
+	private static final String DELETE = 
+		"DELETE FROM group1.member where join_no= ?";
+	private static final String UPDATE = 
+		"UPDATE group1.member set role=? where join_no =?";
+	private static final String GET_MEMBER =
+		"SELECT role , user_id  FROM group1.member where g_no= ?";
+	private static final String GET_MY_GROUP =
+		"SELECT role, g_no FROM group1.member where user_id = ?";
+	private static final String GET_MY_GROUPS =
+	"select * from group1.group where  g_no=any(select g_no from group1.member where user_id= ?)";
+	@Override
+	public void insert(MemberVO memberVO) {
+
+		Connection con = null;
+		PreparedStatement pstmt = null;
+
+		try {
+
+			Class.forName(driver);
+			con = DriverManager.getConnection(url, userid, passwd);
+			pstmt = con.prepareStatement(INSERT_STMT);
+
+			pstmt.setInt(1, memberVO.getRole());
+			pstmt.setInt(2, memberVO.getUser_id());
+			pstmt.setInt(3, memberVO.getG_no());
+			
+
+			pstmt.executeUpdate();
+
+			// Handle any driver errors
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't load database driver. "
+					+ e.getMessage());
+			// Handle any SQL errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. "
+					+ se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+
+	}
+
+	@Override
+	public void update(MemberVO memberVO) {
+
+		Connection con = null;
+		PreparedStatement pstmt = null;
+
+		try {
+
+			Class.forName(driver);
+			con = DriverManager.getConnection(url, userid, passwd);
+			pstmt = con.prepareStatement(UPDATE);
+
+			pstmt.setInt(1, memberVO.getRole());
+//			pstmt.setInt(2, memberVO.getUser_id());
+//			pstmt.setInt(3, memberVO.getG_no());
+			pstmt.setInt(2, memberVO.getJoin_no());
+
+			pstmt.executeUpdate();
+
+			// Handle any driver errors
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't load database driver. "
+					+ e.getMessage());
+			// Handle any SQL errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. "
+					+ se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+
+	}
+
+	@Override
+	public void delete(Integer join_no) {
+
+		Connection con = null;
+		PreparedStatement pstmt = null;
+
+		try {
+
+			Class.forName(driver);
+			con = DriverManager.getConnection(url, userid, passwd);
+			pstmt = con.prepareStatement(DELETE);
+
+			pstmt.setInt(1, join_no);
+
+			pstmt.executeUpdate();
+
+			// Handle any driver errors
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't load database driver. "
+					+ e.getMessage());
+			// Handle any SQL errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. "
+					+ se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+
+	}
+//MemberVO memberVO
+	@Override
+	public MemberVO findByPrimaryKey(Integer join_no) {
+
+		MemberVO memberVO = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+
+			Class.forName(driver);
+			con = DriverManager.getConnection(url, userid, passwd);
+			pstmt = con.prepareStatement(GET_ONE_STMT);
+
+			pstmt.setInt(1, join_no);
+
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				//  也稱為 Domain objects
+				memberVO = new MemberVO();
+				memberVO.setJoin_no(rs.getInt("join_no"));
+				memberVO.setRole(rs.getInt("role"));
+				memberVO.setUser_id(rs.getInt("user_id"));
+				memberVO.setG_no(rs.getInt("g_no"));
+				memberVO.setJoin_time(rs.getTimestamp("join_time"));
+			}
+			// Handle any driver errors
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't load database driver. "
+					+ e.getMessage());
+			// Handle any SQL errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. "
+					+ se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		return memberVO;
+	}
+	//MemberVO memberVO
+	@Override
+	public List<MemberVO> getAll() {
+		List<MemberVO> list = new ArrayList<MemberVO>();
+		MemberVO memberVO = null;
+
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+
+			Class.forName(driver);
+			con = DriverManager.getConnection(url, userid, passwd);
+			pstmt = con.prepareStatement(GET_ALL_STMT);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				//  也稱為 Domain objects
+				memberVO = new MemberVO();
+				memberVO.setJoin_no(rs.getInt("join_no"));
+				memberVO.setRole(rs.getInt("role"));
+				memberVO.setUser_id(rs.getInt("user_id"));
+				memberVO.setG_no(rs.getInt("g_no"));
+				memberVO.setJoin_time(rs.getTimestamp("join_time"));
+
+				list.add(memberVO); // Store the row in the list
+			}
+
+			// Handle any driver errors
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't load database driver. "
+					+ e.getMessage());
+			// Handle any SQL errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. "
+					+ se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		return list;
+	}
+	@Override
+	public List<MemberVO> findByG_NO(Integer g_no) {
+		List<MemberVO> list = new ArrayList<MemberVO>();
+		MemberVO memberVO = null;
+
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+
+			Class.forName(driver);
+			con = DriverManager.getConnection(url, userid, passwd);
+			pstmt = con.prepareStatement(GET_MEMBER);
+			pstmt.setInt(1, g_no);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				//  也稱為 Domain objects
+				memberVO = new MemberVO();
+				memberVO.setRole(rs.getInt("role"));
+				memberVO.setUser_id(rs.getInt("user_id"));
+				list.add(memberVO); // Store the row in the list
+			}
+
+			// Handle any driver errors
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't load database driver. "
+					+ e.getMessage());
+			// Handle any SQL errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. "
+					+ se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		return list;
+	}
+	@Override
+	public List<MemberVO> findByUser_ID(Integer user_id) {
+		List<MemberVO> list = new ArrayList<MemberVO>();
+		MemberVO memberVO = null;
+
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+
+			Class.forName(driver);
+			con = DriverManager.getConnection(url, userid, passwd);
+			pstmt = con.prepareStatement(GET_MY_GROUP);
+			pstmt.setInt(1, user_id);
+			rs = pstmt.executeQuery();
+
+
+			while (rs.next()) {
+				//  也稱為 Domain objects
+				memberVO = new MemberVO();
+				memberVO.setRole(rs.getInt("role"));
+				memberVO.setG_no(rs.getInt("g_no"));
+
+				list.add(memberVO); // Store the row in the list
+			}
+
+			// Handle any driver errors
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't load database driver. "
+					+ e.getMessage());
+			// Handle any SQL errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. "
+					+ se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		return list;
+	}
+//------------------------------------------------------------------------	
+	
+	//MemberVO memberVO
+	public static void main(String[] args) {
+
+		MemberJDBCDAO dao = new MemberJDBCDAO();
+		
+		//Java中使用java.sql.Date
+//		Date ctime = new java.sql.Date(date.getTime());        
+//		pstmt.setDate(1, ctime);
+		//資料庫中存入：2050-01-07 00:00:00
+
+//		String strDate="2050-01-07 08:09:10";  
+//		
+//		SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd- HH:mm:ss");
+//		try {
+//			java.util.Date date = simpleDateFormat.parse(strDate);
+//			System.out.println(date);
+//		} catch (ParseException e) {
+//			e.printStackTrace();
+//		}
+		// 新增	
+		MemberVO memberVO1 = new MemberVO();
+		memberVO1.setRole(1);
+		memberVO1.setUser_id(8);
+		memberVO1.setG_no(4);
+//		memberVO1.setJoin_time(Mydate.timestamp(2021, 1, 1, 12, 34, 56));
+		dao.insert(memberVO1);
+		
+		// 修改
+		MemberVO memberVO2 = new MemberVO();
+		memberVO2.setJoin_no(1);
+		memberVO2.setRole(0);
+//		memberVO2.setUser_id(1);
+//		memberVO2.setG_no(1);
+//		memberVO2.setJoin_time(Mydate.timestamp(2021, 1, 1, 12, 34, 56));
+		dao.update(memberVO2);
+
+		// 刪除
+//		dao.delete(0);
+
+		// 查詢
+		MemberVO memberVO3 = dao.findByPrimaryKey(1);
+		System.out.print(memberVO3.getJoin_no() + ",");
+		System.out.print(memberVO3.getRole() + ",");
+		System.out.print(memberVO3.getUser_id() + ",");
+		System.out.print(memberVO3.getG_no() + ",");
+		System.out.println(memberVO3.getJoin_time() + ",");
+		System.out.println("---------------------");
+
+		// 查詢
+		List<MemberVO> list = dao.getAll();
+		for (MemberVO aMember : list) {
+			System.out.print(aMember.getJoin_no() + ",");
+			System.out.print(aMember.getRole() + ",");
+			System.out.print(aMember.getUser_id() + ",");
+			System.out.print(aMember.getG_no() + ",");
+			System.out.println(aMember.getJoin_time() + ",");
+			System.out.println();
+		}
+		
+		
+//		List<MemberVO> list1 = dao.findByG_NO(1);
+//		System.out.println("揪團的成員有:");
+//		for (MemberVO bMember : list1) {
+//
+//		System.out.print("角色:"+bMember.getRole() + ",");
+//		System.out.println("成員:"+bMember.getUser_id() + ",");
+//		}
+//		System.out.println("--------------------------------------");
+//		List<MemberVO> list2 = dao.findByUser_ID(1);
+//		System.out.println("我參加的揪團:");
+//		for (MemberVO cMember : list2) {
+//
+//		System.out.print("角色:"+cMember.getRole() + ",");
+//		System.out.println("揪團編號:"+cMember.getG_no() + ",");	
+//		}
+		
+		}
+
+	}	

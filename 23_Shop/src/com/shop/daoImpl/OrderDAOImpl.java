@@ -11,19 +11,35 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
 import com.shop.dao.OrderDAO;
 import com.shop.model.Order;
 import com.shop.util.Util;
 
 public class OrderDAOImpl implements OrderDAO{
+	static Context ctx;
+	static DataSource ds;
+
 	
+	static {
+		try {
+			ctx = new javax.naming.InitialContext();
+			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/Shop"); //前兩行可包在static{}或init()裡面
+		
+		} catch (NamingException e) {
+			e.printStackTrace();
+		} 
+	}
 	@Override
 	public int add(Connection connection, Order order) throws SQLException {
 		Connection con = connection;
 		PreparedStatement ps = null;
 		ResultSet resultSet = null;
 		try {
-//			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+//			con = ds.getConnection();
 			String[] col = {"ord_no"};
 			ps = con.prepareStatement("INSERT INTO shop.order(user_id, support_admin_id, ord_time, ord_status, ord_total, ship_method, ship_info, ship_fee) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", col);
 			
@@ -73,7 +89,7 @@ public class OrderDAOImpl implements OrderDAO{
 		PreparedStatement ps = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("UPDATE shop.order SET  ord_status=?, ord_total=?  WHERE ord_no=?");
 			
 //			ps.setInt(1, order.getUser_id());
@@ -118,7 +134,7 @@ public class OrderDAOImpl implements OrderDAO{
 		PreparedStatement ps = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("DELETE FROM shop.order WHERE ord_no=?");
 			
 			ps.setInt(1, pk);
@@ -157,7 +173,7 @@ public class OrderDAOImpl implements OrderDAO{
 		ResultSet rs = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("SELECT * FROM shop.order WHERE ord_no=?");
 			ps.setInt(1, pk);
 			
@@ -215,7 +231,7 @@ public class OrderDAOImpl implements OrderDAO{
 		ResultSet rs = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("SELECT * FROM shop.order WHERE user_id=?");
 			ps.setInt(1, id);
 			
@@ -231,6 +247,7 @@ public class OrderDAOImpl implements OrderDAO{
 				order.setShip_method(rs.getString("ship_method"));
 				order.setSupport_admin_id(rs.getInt("support_admin_id"));
 				order.setUser_id(rs.getInt("user_id"));
+				order.setOrd_no(rs.getInt("ord_no"));
 				
 				list.add(order);
 			}
@@ -277,7 +294,7 @@ public class OrderDAOImpl implements OrderDAO{
 		ResultSet rs = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			st = con.createStatement();
 			rs = st.executeQuery("SELECT * FROM shop.order");
 			
@@ -291,6 +308,7 @@ public class OrderDAOImpl implements OrderDAO{
 				order.setShip_method(rs.getString("ship_method"));
 				order.setSupport_admin_id(rs.getInt("support_admin_id"));
 				order.setUser_id(rs.getInt("user_id"));
+				order.setOrd_no(rs.getInt("ord_no"));
 				
 				list.add(order);
 			}

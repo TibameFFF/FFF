@@ -28,7 +28,7 @@ public class ProdImage extends HttpServlet {
 		try {
 			Context ctx = new InitialContext();
 			//¶³ºÝÁp½u
-			DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/FFF");
+			DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/Shop");
 			con = ds.getConnection();
 		} catch (NamingException e) {
 			e.printStackTrace();

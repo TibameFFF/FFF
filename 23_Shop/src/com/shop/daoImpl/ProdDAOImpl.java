@@ -4,19 +4,35 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
 import com.shop.dao.ProdDAO;
 import com.shop.model.Prod;
 import com.shop.util.Util;
 
 
 public class ProdDAOImpl implements ProdDAO {
+	static Context ctx;
+	static DataSource ds;
 
+	
+	static {
+		try {
+			ctx = new javax.naming.InitialContext();
+			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/Shop"); //前兩行可包在static{}或init()裡面
+		
+		} catch (NamingException e) {
+			e.printStackTrace();
+		} 
+	}
 	@Override
 	public void add(Prod prod) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("INSERT INTO shop.prod(prod_type_no, prod_name, prod_text, prod_on_time, prod_off_time, prod_status) VALUES(?, ?, ?, ?, ?, ?)");
 			ps.setInt(1, prod.getProd_type_no());
 			ps.setString(2, prod.getProd_name());
@@ -55,7 +71,7 @@ public class ProdDAOImpl implements ProdDAO {
 		Connection con = null;
 		PreparedStatement ps = null;
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("UPDATE shop.prod SET prod_type_no=? , prod_name=?, prod_text=?, prod_on_time=?, prod_off_time=?, prod_status=? WHERE prod_id=?");
 			ps.setInt(1, prod.getProd_type_no());
 			ps.setString(2, prod.getProd_name());
@@ -94,7 +110,7 @@ public class ProdDAOImpl implements ProdDAO {
 		Connection con = null;
 		PreparedStatement ps = null;
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("DELETE FROM shop.prod WHERE prod_id = ?");
 			ps.setInt(1, id);
 			
@@ -131,7 +147,7 @@ public class ProdDAOImpl implements ProdDAO {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("SELECT * FROM shop.prod WHERE prod_id = ?");
 			ps.setInt(1, id);
 			
@@ -187,7 +203,7 @@ public class ProdDAOImpl implements ProdDAO {
 		Statement st = null;
 		ResultSet rs = null;
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			st = con.createStatement();
 			rs=st.executeQuery("SELECT * FROM shop.prod WHERE prod_status = 1" );
 			
@@ -250,21 +266,21 @@ public class ProdDAOImpl implements ProdDAO {
 		
 		int type =0;
 		switch (str) {
-		case "生活休閒":
+		case "��暑隡��":
 			type=1;
 			break;
-		case "美妝保養":
+		case "蝢����":
 			type=2;
 			break;
-		case "風格穿搭":
+		case "憸冽蝛踵":
 			type=3;
 			break;
-		case "3C家電":
+		case "3C摰園":
 			type=4;
 			break;
 		}
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			if(type == 0) {
 				st = con.prepareStatement("SELECT * FROM SHOP.prod WHERE (prod_name LIKE ? or prod_text LIKE ?) AND prod_status = 1");
 				st.setString(1, "%"+str+"%");
@@ -327,9 +343,9 @@ public class ProdDAOImpl implements ProdDAO {
 //	FROM prod_spec ps
 //	    JOIN prod pr ON pr.prod_id = ps.prod_id
 //	    JOIN prod_ships pship ON pr.prod_id = pship.prod_id
-//	    -- WHERE ps.prod_price BETWEEN 500 AND 999999; 價格篩選
-//	    -- WHERE pr.prod_type_no = 1 OR pr.prod_type_no = 2 商品分類篩選
-//	    -- WHERE pship.ship_no = 1 OR pship.ship_no = 2 商品運送篩選
+//	    -- WHERE ps.prod_price BETWEEN 500 AND 999999; ��蝭拚
+//	    -- WHERE pr.prod_type_no = 1 OR pr.prod_type_no = 2 �����祟�
+//	    -- WHERE pship.ship_no = 1 OR pship.ship_no = 2 �����祟�
 	
 	public List<Prod> filterByPriceTypeShip(List<Integer> price, List<Integer> typeList, List<Integer> ship, String search ) {
 		List<Prod> prodList = new ArrayList<Prod>();
@@ -374,16 +390,16 @@ public class ProdDAOImpl implements ProdDAO {
 		
 		int type =0;
 		switch (search) {
-		case "生活休閒":
+		case "��暑隡��":
 			type=1;
 			break;
-		case "美妝保養":
+		case "蝢����":
 			type=2;
 			break;
-		case "風格穿搭":
+		case "憸冽蝛踵":
 			type=3;
 			break;
-		case "3C家電":
+		case "3C摰園":
 			type=4;
 			break;
 		}
@@ -407,7 +423,7 @@ public class ProdDAOImpl implements ProdDAO {
 		Statement st = null;
 		ResultSet rs = null;
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			st = con.createStatement();
 			rs = st.executeQuery(sql.toString());
 	
@@ -480,7 +496,7 @@ public class ProdDAOImpl implements ProdDAO {
 		ResultSet rs = null;
 		int result =0;
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			st = con.createStatement();
 			rs=st.executeQuery("SELECT COUNT(prod_id) FROM SHOP.prod WHERE prod_status = 1" );
 			

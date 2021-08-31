@@ -8,6 +8,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
 import com.shop.dao.ProdShipsDAO;
 import com.shop.model.ProdShips;
 import com.shop.model.ProdSpec;
@@ -15,14 +19,26 @@ import com.shop.util.Util;
 
 
 public class ProdShipsDAOImpl implements ProdShipsDAO{
+	static Context ctx;
+	static DataSource ds;
 
+	
+	static {
+		try {
+			ctx = new javax.naming.InitialContext();
+			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/Shop"); //前兩行可包在static{}或init()裡面
+		
+		} catch (NamingException e) {
+			e.printStackTrace();
+		} 
+	}
 	@Override
 	public void add(ProdShips prodShips) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("INSERT INTO shop.prod_ships(prod_id, ship_no) VALUES(?, ?)");
 			
 			ps.setInt(1, prodShips.getProd_id());
@@ -60,7 +76,7 @@ public class ProdShipsDAOImpl implements ProdShipsDAO{
 		PreparedStatement ps = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("UPDATE shop.prod_ships SET prod_id =?, ship_no=? WHERE prod_ship_id=?");
 			
 			ps.setInt(1, prodShips.getProd_id());
@@ -99,7 +115,7 @@ public class ProdShipsDAOImpl implements ProdShipsDAO{
 		PreparedStatement ps = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("DELETE FROM shop.prod_ships WHERE prod_ship_id=?");
 			
 			ps.setInt(1, id);
@@ -138,7 +154,7 @@ public class ProdShipsDAOImpl implements ProdShipsDAO{
 		ResultSet rs = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("SELECT * FROM shop.prod_ships WHERE prod_id=?");
 			ps.setInt(1, id);
 			
@@ -194,7 +210,7 @@ public class ProdShipsDAOImpl implements ProdShipsDAO{
 		ResultSet rs = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("SELECT * FROM shop.prod_ships WHERE ship_no=?");
 			ps.setInt(1, no);
 			

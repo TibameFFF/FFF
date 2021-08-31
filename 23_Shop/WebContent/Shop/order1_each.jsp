@@ -130,7 +130,7 @@
                         <c:forEach var="prod" items="${prodList}" varStatus="s">
 							<tr>
 	                            <td>
-	                                <img src="/FFF/OrderProdImage?id=${prod.ord_prod_id}" alt="prod_pic">
+	                                <img src="<%= request.getContextPath() %>/OrderProdImage?id=${prod.ord_prod_id}" alt="prod_pic">
 	                            </td>
 	                            <td style="word-wrap : break-word">
 	                                <p>${prod.hist_prod_name}</p>

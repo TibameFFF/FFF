@@ -9,11 +9,27 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
 import com.shop.model.Prod;
 
 
 public class ProdToShowDAOImpl implements ProdToShowDAO {
+	static Context ctx;
+	static DataSource ds;
 
+	
+	static {
+		try {
+			ctx = new javax.naming.InitialContext();
+			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/Shop"); //前兩行可包在static{}或init()裡面
+		
+		} catch (NamingException e) {
+			e.printStackTrace();
+		} 
+	}
 	@Override
 	public List<ProdToShow> getAll() {
 		Connection con = null;
@@ -22,7 +38,7 @@ public class ProdToShowDAOImpl implements ProdToShowDAO {
 		ResultSet rs = null;
 		
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.createStatement();
 			rs = ps.executeQuery("SELECT DISTINCT pr.prod_id, pr.prod_name, MIN(ps.prod_price), pr.prod_status FROM prod pr JOIN prod_spec ps ON ps.prod_id = pr.prod_id WHERE pr.prod_status = 1 GROUP BY pr.prod_id");
 			
@@ -77,7 +93,7 @@ public class ProdToShowDAOImpl implements ProdToShowDAO {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			ps = con.prepareStatement("SELECT DISTINCT pr.prod_id, pr.prod_name, MIN(ps.prod_price), pr.prod_status FROM prod pr JOIN prod_spec ps ON ps.prod_id = pr.prod_id WHERE pr.prod_id=? GROUP BY pr.prod_id ");
 			ps.setInt(1, id);
 			
@@ -146,7 +162,7 @@ public class ProdToShowDAOImpl implements ProdToShowDAO {
 			break;
 		}
 		try {
-			con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+			con = ds.getConnection();
 			if(type == 0) {
 				st = con.prepareStatement("SELECT DISTINCT pr.prod_id, pr.prod_name, MIN(ps.prod_price) FROM prod pr JOIN prod_spec ps ON ps.prod_id = pr.prod_id WHERE (pr.prod_name LIKE ? OR pr.prod_text LIKE ?) AND pr.prod_status = 1 GROUP BY pr.prod_id ");
 				st.setString(1, "%"+search+"%");
@@ -285,7 +301,7 @@ public class ProdToShowDAOImpl implements ProdToShowDAO {
 				Statement st = null;
 				ResultSet rs = null;
 				try {
-					con = DriverManager.getConnection(Util.URL, Util.USER, Util.PASSWORD);
+					con = ds.getConnection();
 					st = con.createStatement();
 					rs = st.executeQuery(sql.toString());
 			
