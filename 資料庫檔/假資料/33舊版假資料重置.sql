@@ -4,7 +4,7 @@ DELETE FROM `group1`.`comment`;
 ALTER TABLE `group1`.`comment` AUTO_INCREMENT=0;
 
 DELETE FROM `group1`.`group`;
-ALTER TABLE `group1`.`group` AUTO_INCREMENT=0;
+ALTER TABLE `group1`.`group`  AUTO_INCREMENT=0;
 
 DELETE FROM `group1`.`member`;
 ALTER TABLE `group1`.`member` AUTO_INCREMENT=0;
@@ -53,4 +53,4 @@ INSERT INTO `group1`.`reply` ( `user_id`, `reply`, `reply_time`, `comment_no`) V
 INSERT INTO `group1`.`reply` ( `user_id`, `reply`, `reply_time`, `comment_no`) VALUES ('3', '回覆2', '2020-01-01', '2');
 INSERT INTO `group1`.`reply` ( `user_id`, `reply`, `reply_time`, `comment_no`) VALUES ('2', '回覆3', '2020-01-01', '3');
 INSERT INTO `group1`.`reply` ( `user_id`, `reply`, `reply_time`, `comment_no`) VALUES ('1', '回覆4', '2020-01-01', '4');
-SET foreign_key_checks = 0;
+SET foreign_key_checks = 1;
