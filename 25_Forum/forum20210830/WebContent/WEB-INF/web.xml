@@ -14,9 +14,43 @@
   <servlet>
     <servlet-name>EmpServlet</servlet-name>
     <servlet-class>com.emp.controller.EmpServlet</servlet-class>
-  </servlet>
+    </servlet>
   <servlet-mapping>
     <servlet-name>EmpServlet</servlet-name>
     <url-pattern>/emp/emp.do</url-pattern>
+  </servlet-mapping>
+ 
+ 
+ <servlet>
+    <servlet-name>FirstPageIndexLoad</servlet-name>
+    <servlet-class>com.forum.controller.FirstPageIndexLoad</servlet-class>
+    </servlet>
+  <servlet-mapping>
+    <servlet-name>FirstPageIndexLoad</servlet-name>
+    <url-pattern>/forum/FirstPageIndexLoad</url-pattern>
+  </servlet-mapping>
+ 
+ <servlet>
+    <servlet-name>SubjectPageIndexLoad2</servlet-name>
+    <servlet-class>com.forum.controller.SubjectPageIndexLoad2</servlet-class>
+    </servlet>
+  <servlet-mapping>
+    <servlet-name>SubjectPageIndexLoad2</servlet-name>
+    <url-pattern>/forum/SubjectPageIndexLoad2</url-pattern>
+  </servlet-mapping>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  <servlet>
+    <servlet-name>article_pictureServlet</servlet-name>
+    <servlet-class>com.forum.controller.article_pictureServlet</servlet-class>
+    </servlet>
+  <servlet-mapping>
+    <servlet-name>article_pictureServlet</servlet-name>
+    <url-pattern>/forum/article_pictureServlet</url-pattern>
   </servlet-mapping>
 </web-app>

@@ -7,8 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import com.forum.controller.ArticleDAOImp;
-import com.forum.controller.Reply_LikeDAOImp;
+import com.forum.DAOImp.ArticleDAOImp;
+import com.forum.DAOImp.Reply_LikeDAOImp;
 import com.forum.model.article;
 import com.forum.model.reply_like;
 
@@ -40,6 +40,8 @@ public class Fake_reply_like {
 			while ((line = br.readLine()) != null) {
 				reply_like6 = new reply_like();
 				String[] TextArry = line.split("@");
+				
+				
 				reply_like6.setUser_id(Integer.valueOf(userID));
 				article = new article();
 				article.setUser_id(reply_like6.getUser_id());

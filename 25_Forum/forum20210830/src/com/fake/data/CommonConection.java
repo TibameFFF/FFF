@@ -6,7 +6,15 @@ import java.sql.SQLException;
 
 public class CommonConection {
 
-	
+	public  Connection getConnectionShop() throws SQLException {
+		String serverName = "localhost:3306";
+		String database = "Shop";
+		// 帳號和密碼
+		String user = "root";
+		String password = "password";
+		String url = "jdbc:mysql://" + serverName + "/" + database+"?user="+user+"&password="+password+"&useUnicode=true&serverTimezone=Asia/Taipei&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=true";
+		return DriverManager.getConnection(url);                                                                                                 //&characterEncoding=UTF-8
+	}
 	
 	
 	public  Connection getConnection() throws SQLException {

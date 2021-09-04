@@ -66,8 +66,7 @@ public class EmpServlet extends HttpServlet {
 				}
 				// Send the use back to the form, if there were errors
 				if (!errorMsgs.isEmpty()) {
-					RequestDispatcher failureView = req
-							.getRequestDispatcher("/emp/select_page.jsp");
+					RequestDispatcher failureView = req.getRequestDispatcher("/emp/select_page.jsp");
 					failureView.forward(req, res);
 					return;//�{�����_
 				}

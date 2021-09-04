@@ -4,12 +4,11 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.forum.controller.ArticleDAOImp;
-import com.forum.controller.ReplyDAOImp;
+import com.forum.DAOImp.ArticleDAOImp;
+import com.forum.DAOImp.ReplyDAOImp;
 import com.forum.model.article;
 import com.forum.model.reply;
 
@@ -32,8 +31,9 @@ public class Fake_reply {
 			// 開始讀取txt文字檔
 			reply reply5 = null;
 			ReplyDAOImp reply = new ReplyDAOImp();
-			ArticleDAOImp articleDAOImp  = new ArticleDAOImp();
-			List<article> articleList=articleDAOImp.queryAll();
+			ArticleDAOImp article  = new ArticleDAOImp();
+			List<article> articleList = article.queryAll();
+			
 			while ((line = br.readLine()) != null) {
 				if(!"".equals(line)) {
 					reply5 = new reply();

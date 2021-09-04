@@ -3,12 +3,10 @@ package com.fake.data;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.Date;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
-import com.forum.controller.ArticleDAOImp;
+import com.forum.DAOImp.ArticleDAOImp;
 import com.forum.model.article;
 
 public class Fake_article {
@@ -33,6 +31,7 @@ public class Fake_article {
 			while ((line = br.readLine()) != null) {
 				article1 = new article();
 				String[] TextArry = line.split("@");
+				
 				article1.setArticle_id(Integer.valueOf(TextArry[0]));// AI
 				article1.setUser_id(userID);// 1
 				article1.setArticle_type_num(Integer.valueOf(TextArry[1]));// 1

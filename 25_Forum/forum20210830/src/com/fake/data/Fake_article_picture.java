@@ -6,8 +6,8 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import com.forum.controller.ArticleDAOImp;
-import com.forum.controller.Article_PictureDAOImp;
+import com.forum.DAOImp.ArticleDAOImp;
+import com.forum.DAOImp.Article_PictureDAOImp;
 import com.forum.model.article;
 import com.forum.model.article_picture;
 

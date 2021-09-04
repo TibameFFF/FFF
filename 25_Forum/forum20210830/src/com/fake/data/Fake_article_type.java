@@ -3,12 +3,10 @@ package com.fake.data;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
 import java.util.List;
 
-import com.forum.controller.Article_TypeDAOImp;
+import com.forum.DAOImp.Article_TypeDAOImp;
 import com.forum.model.article_type;
 
 public class Fake_article_type {
@@ -37,14 +35,15 @@ public class Fake_article_type {
 				if(!"".equals(line)) {
 					article_type4 = new article_type();
 					String[] TextArry = line.split("@");
-
+					if(!article_typeList.isEmpty()) {
+					
 					article_type4.setArticle_type_num(Integer.valueOf(TextArry[0]));// 1
 					article_type4.setArticle_type_name(String.valueOf(TextArry[1]));// 1
 
 					article_type.insert(article_type4); 
 				}
 				
-
+				}
 			}
 			result=true;
 		} catch (Exception e) {

@@ -7,8 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import com.forum.controller.ArticleDAOImp;
-import com.forum.controller.Article_LikeDAOImp;
+import com.forum.DAOImp.ArticleDAOImp;
+import com.forum.DAOImp.Article_LikeDAOImp;
 import com.forum.model.article;
 import com.forum.model.article_like;
 

@@ -10,27 +10,26 @@ public class ImportData {
 		selectCenter Center = new selectCenter();
 		int userid = Center.queryCenter();
 		
-//		// step 1 先匯入article_type
-//		Fake_article_type fake_article_type = new Fake_article_type();
-//		result = fake_article_type.importArticleType(filePath);
-//		
-//		//step 2匯入 article
-//		Fake_article fake_article = new Fake_article();
-//		if (result == true) {
-//			result = fake_article.importArticleData(filePath, userid);
-//		}
-//		
-//		// step 3 匯入article_like
-//	Fake_article_like fake_article_like = new Fake_article_like();
-//		if (result == true) {
-//			result = fake_article_like.importArticleLikeData(filePath, userid);
-//		}
+		// step 1 先匯入article_type
+		Fake_article_type fake_article_type = new Fake_article_type();
+		result = fake_article_type.importArticleType(filePath);
 		
-//		// step 4匯入reply
-//		Fake_reply fake_reply = new Fake_reply();
-//		if(result == true) {
-//		fake_reply.importReplyData(filePath,userid);	
-//		}
+		//step 2匯入 article
+		Fake_article fake_article = new Fake_article();
+		if (result == true) {
+			result = fake_article.importArticleData(filePath, userid);
+		}
+		
+		// step 3 匯入article_like
+		Fake_article_like fake_article_like = new Fake_article_like();
+		if (result == true) {
+			result = fake_article_like.importArticleLikeData(filePath, userid);
+		}
+		
+		// step 4匯入reply
+		Fake_reply fake_reply = new Fake_reply();	if(result == true) {
+		fake_reply.importReplyData(filePath,userid);	
+		}
 		
 		
 		// step 5匯入article_picture

@@ -1,17 +1,6 @@
 package com.fake.data;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-
-import java.util.List;
-
-import com.forum.controller.ArticleDAOImp;
-import com.forum.controller.Article_TypeDAOImp;
-import com.forum.model.article;
-import com.forum.model.article_type;
+import com.forum.DAOImp.ArticleDAOImp;
 
 public class selectCenter {
 
