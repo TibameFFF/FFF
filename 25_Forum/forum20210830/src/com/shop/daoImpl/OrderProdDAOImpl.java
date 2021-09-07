@@ -20,16 +20,6 @@ public class OrderProdDAOImpl implements OrderProdDAO{
 	static Context ctx;
 	static DataSource ds;
 
-	
-	static {
-		try {
-			ctx = new javax.naming.InitialContext();
-			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/Shop"); //�e���i�]�bstatic{}��init()�̭�
-		
-		} catch (NamingException e) {
-			e.printStackTrace();
-		} 
-	}
 	@Override
 	public void add(Connection connection, OrderProd orderProd) throws SQLException{
 		Connection con = connection;

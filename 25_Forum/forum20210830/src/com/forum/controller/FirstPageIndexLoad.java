@@ -38,6 +38,10 @@ public class FirstPageIndexLoad extends HttpServlet {
 		
 		try {
 			req.setCharacterEncoding("UTF-8");
+			
+			
+			String moldStr = req.getParameter("jsp");
+			
 //step one 1撈主題分類 
 			
 			Article_TypeDAOImp article_type = new Article_TypeDAOImp();

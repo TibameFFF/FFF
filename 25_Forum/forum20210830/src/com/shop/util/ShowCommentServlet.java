@@ -12,8 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.shop.model.EvalPic;
 import com.shop.model.OrderProd;
 import com.shop.model.ProdSpec;

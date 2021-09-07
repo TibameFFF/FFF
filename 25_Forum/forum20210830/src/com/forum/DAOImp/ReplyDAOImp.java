@@ -253,6 +253,85 @@ private Connection getConnectionBycenter() throws SQLException {
 		return reply;
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	public List<reply> queryByReply1(reply mold) {
+		List<reply> list = new ArrayList<reply>();
+		reply reply = null;
+		
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			
+			CommonConection commonConection = new CommonConection();
+			con = commonConection.getConnection();
+			pstmt = con.prepareStatement("select *from reply where article_id = "+mold.getArticle_id());
+			rs = pstmt.executeQuery();
+			
+			while (rs.next()) {
+				
+				reply = new reply();
+				reply.setReply_id(rs.getInt("reply_id"));
+				reply.setArticle_id(rs.getInt("article_id"));
+				reply.setReply_user_id(rs.getInt("reply_user_id"));
+				reply.setReply_content(rs.getString("reply_content"));
+				reply.setReply_time(rs.getDate("reply_time"));
+				reply.setReply_like_count(rs.getInt("reply_like_count"));
+				reply.setLastreplytime(rs.getDate("lastreplytime"));
+				reply.setReply_status(rs.getString("reply_status"));
+				
+				}
+			
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. "
+					+ se.getMessage());
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		return list;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	@Override
 	public List<reply> getAll() {

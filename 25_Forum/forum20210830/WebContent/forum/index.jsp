@@ -46,56 +46,12 @@
 	}
 </script>
 
-<script>
-	$(function() {
-		if (checkIsNullSpace('${list1[0].title}')) {
-			$("#target").attr("action", "FirstPageIndexLoad");
-			$("#target").submit();
-		}
-	})
-	function checkIsNullSpace(val) {
-		if (val == null || val == undefined || val == "undefined" || val == "") {
-			return true;
-		}
-		return false;
-	}
-</script>
 
-<script>
-	$(function() {
-		if (checkIsNullSpace('${list2[0].title}')) {
-			$("#target").attr("action", "FirstPageIndexLoad");
-			$("#target").submit();
-		}
-	})
-	function checkIsNullSpace(val) {
-		if (val == null || val == undefined || val == "undefined" || val == "") {
-			return true;
-		}
-		return false;
-	}
-</script>
-
-<script>
-	$(function() {
-		if (checkIsNullSpace('${list3[0].hist_prod_name}')) {
-			$("#target").attr("action", "FirstPageIndexLoad");
-			$("#target").submit();
-		}
-	})
-	function checkIsNullSpace(val) {
-		if (val == null || val == undefined || val == "undefined" || val == "") {
-			return true;
-		}
-		return false;
-	}
-</script>
 
 <body>
 
 	<form id="target" name="actionForm" method="post"
 		enctype="multipart/form-data"></form>
-
 
 	<div class="main">
 
@@ -126,23 +82,15 @@
 				<div class="navs_menu">
 
 					<c:forEach var="list" items="${list}">
-<!--                                                       地址(跟web.xml)    問號後 傳值識別字串             集合                  屬性      -->
-						<a href=""<c:url value='/forum/SubjectPageIndexLoad2?article_type_num=${ list.article_type_num}'/>"">${list.article_type_name}</a>
-						<!-- 					<a href="navs.html">運動</a>  -->
-						<!-- 					<a href="navs.html">旅遊</a> <a -->
-						<!-- 						href="navs.html">戶外</a> <a href="navs.html">生活</a> <a -->
-						<!-- 						href="navs.html">閒聊</a> <a href="navs.html">時事</a> <a -->
-						<!-- 						href="navs.html">戀愛交友</a> <a href="navs.html">知性男女</a> <a -->
-						<!-- 						href="navs.html">男女法律</a> -->
+						<!--                                                       地址(跟web.xml)    問號後 傳值識別字串             集合                  屬性      -->
+						<a
+							href=<c:url value='/forum/SubjectPageIndexLoad2?article_type_num=${ list.article_type_num}&article_type_name=${ list.article_type_name}'/>>${list.article_type_name}</a>
+
 					</c:forEach>
 
 
 
 				</div>
-				<!-- 				<div class="navs_search">  -->
-				<!-- 					<input type="text" placeholder="請輸入關鍵字.."> <a -->
-				<!-- 						href="result.html"><i class="fas fa-search"></i></a> -->
-				<!-- 				</div> -->
 			</div>
 		</div>
 
@@ -163,67 +111,11 @@
 								<ol>
 
 									<c:forEach var="list1" items="${list1}">
-										<!--				<a href="navs.jsp">${list1.title}</a>           -->
 										<li>
 											<p class="text-truncate">
-												<a href="navs.jsp">${list1.title}</a>
-												<!--			<a href="">&nbsp;今日確證人數490</a>    -->
+												<a href=<c:url value='/forum/ShowArticle?article_id=${list1.article_id}'/>>${list1.title}</a>
 											</p>
 										</li>
-										<!--	<li>  -->
-										<!--		<p class="text-truncate">       -->
-
-										<!--			<a href="">&nbsp;中華隊再見全壘打 進入前四強</a>     -->
-										<!--		</p>
-									</li>                                                     -->
-										<!--				<li>
-										<p class="text-truncate">
-										
-											<a href="">&nbsp;今日確證人數490</a>      
-										</p>
-									</li>
-									<li>
-										<p class="text-truncate">
-									
-											<a href="">&nbsp;中華隊再見全壘打 進入前四強</a>    
-										</p>
-									</li>
-									<li>
-										<p class="text-truncate">
-										
-											<a href="">&nbsp;今日確證人數490</a>      
-										</p>
-									</li>
-									<li>
-										<p class="text-truncate">
-										
-											<a href="">&nbsp;中華隊再見全壘打 進入前四強</a>    
-										</p>
-									</li>
-									<li>
-										<p class="text-truncate">
-										
-										<a href="">&nbsp;今日確證人數490</a>   
-										</p>
-									</li>
-									<li>
-										<p class="text-truncate">
-										
-											<a href="">&nbsp;中華隊再見全壘打 進入前四強</a>   
-										</p>
-									</li>
-									<li>
-											<p class="text-truncate">
-	
-											<a href="">&nbsp;今日確證人數490</a>    
-										</p>
-									</li>
-									<li>
-									<p class="text-truncate">
-										
-										<a href="">&nbsp;中華隊再見全壘打 進入前四強</a>   
-										</p>
-									</li>                        -->
 									</c:forEach>
 
 								</ol>
@@ -242,51 +134,6 @@
 												<!--								<a href="">&nbsp;五月天門票，買一送一</a>    -->
 											</p>
 										</li>
-										<!--				<li>
-										<p class="text-truncate">
-											<a href="">&nbsp;六福村門票，現在優惠333</a>
-										</p>
-									</li>
-									<li>
-										<p class="text-truncate">
-											<a href="">&nbsp;五月天門票，買一送一</a>
-										</p>
-									</li>
-									<li>
-										<p class="text-truncate">
-											<a href="">&nbsp;六福村門票，現在優惠333</a>
-										</p>
-									</li>
-									<li>
-										<p class="text-truncate">
-											<a href="">&nbsp;五月天門票，買一送一</a>
-										</p>
-									</li>
-									<li>
-										<p class="text-truncate">
-											<a href="">&nbsp;六福村門票，現在優惠333</a>
-										</p>
-									</li>
-									<li>
-										<p class="text-truncate">
-											<a href="">&nbsp;五月天門票，買一送一</a>
-										</p>
-									</li>
-									<li>
-										<p class="text-truncate">
-											<a href="">&nbsp;六福村門票，現在優惠333</a>
-										</p>
-									</li>
-									<li>
-										<p class="text-truncate">
-											<a href="">&nbsp;五月天門票，買一送一</a>
-										</p>
-									</li>
-									<li>
-										<p class="text-truncate">
-											<a href="">&nbsp;六福村門票，現在優惠333</a>
-										</p>
-									</li>                    -->
 									</c:forEach>
 
 								</ol>
@@ -298,59 +145,11 @@
 								<ol>
 
 									<c:forEach var="list2" items="${list2}">
-										<!--  		<a href="navs.jsp">${list2.title}</a>           -->
 										<li>
 											<p class="text-truncate">
-												<a href="navs.jsp">${list2.title}</a>
-												<!--					<a href="">&nbsp;獨家回應｜詹雅雯驚爆送急診于美人幫集氣 直播突現身揭露真實病況</a>-->
+												<a href=<c:url value='/forum/ShowArticle?article_id=${list2.article_id}'/>>${list2.title}</a>
 											</p>
 										</li>
-										<!--						<li>
-										<p class="text-truncate">
-											<a href="">&nbsp;「我現在就是不想打高端」 楊蕙如怒了：神經病高端仔不要再來惹毛我</a>
-										</p>
-									</li>
-									<li>
-										<p class="text-truncate">
-											<a href="">&nbsp;「野馬男」警局不認爹娘！移送囂張比中指 撞女害命危堅不認錯 </a>
-										</p>
-									</li>
-									<li>
-										<p class="text-truncate">
-											<a href="">&nbsp;NVIDIA發表會承認「造假」 CEO黃仁勳騙倒了全世界</a>
-										</p>
-									</li>
-									<li>
-										<p class="text-truncate">
-											<a href="">&nbsp;殘念！看不到戴資穎、「麟洋配」在自家獻技 台北羽球公開賽宣布停辦</a>
-										</p>
-									</li>
-									<li>
-										<p class="text-truncate">
-											<a href="">&nbsp;獨家回應｜詹雅雯驚爆送急診于美人幫集氣 直播突現身揭露真實病況</a>
-										</p>
-									</li>
-									<li>
-										<p class="text-truncate">
-											<a href="">&nbsp;「我現在就是不想打高端」 楊蕙如怒了：神經病高端仔不要再來惹毛我</a>
-										</p>
-									</li>
-									<li>
-										<p class="text-truncate">
-											<a href="">&nbsp;「野馬男」警局不認爹娘！移送囂張比中指 撞女害命危堅不認錯 </a>
-										</p>
-									</li>
-									<li>
-										<p class="text-truncate">
-											<a href="">&nbsp;NVIDIA發表會承認「造假」 CEO黃仁勳騙倒了全世界</a>
-										</p>
-									</li>
-									
-									<li>
-										<p class="text-truncate">
-											<a href="">&nbsp;殘念！看不到戴資穎、「麟洋配」在自家獻技 台北羽球公開賽宣布停辦</a>
-										</p>
-									</li>              -->
 									</c:forEach>
 
 								</ol>
@@ -366,7 +165,7 @@
 		</section>
 
 		<div class="plugins">
-			<a href="create_content.html"><i class="fas fa-comment-medical"></i></a>
+			<a href="create_content.jsp"><i class="fas fa-comment-medical"></i></a>
 		</div>
 
 		<footer>

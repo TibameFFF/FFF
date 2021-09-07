@@ -1,0 +1,59 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="Big5"%>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark" aria-label="Fourth navbar example">
+	<div class="container-fluid">
+		<a class="navbar-brand" href="#">
+			<img src="<%=request.getContextPath()%>/info/img/logo.png" alt="mdo" height="30" style="position:relative;top:-4px;">
+		</a>
+		<button class="navbar-toggler" type="button"
+			data-bs-toggle="collapse" data-bs-target="#navbarsExample04"
+			aria-controls="navbarsExample04" aria-expanded="false"
+			aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarsExample04">
+			<ul class="navbar-nav me-auto mb-2 mb-md-0">
+				<li class="nav-item dropdown"><a
+					class="nav-link dropdown-toggle" href="#" id="dropdown04"
+					data-bs-toggle="dropdown" aria-expanded="false">論壇</a>
+					<ul class="dropdown-menu" aria-labelledby="dropdown04">
+						<li><a class="dropdown-item" href="/FFF/forum/index.jsp">論壇首頁</a></li>
+						<li><a class="dropdown-item" href="/FFF/forum/create_content.jsp">發新文章</a></li>
+					</ul></li>
+				<li class="nav-item dropdown"><a
+					class="nav-link dropdown-toggle" href="#" id="dropdown04"
+					data-bs-toggle="dropdown" aria-expanded="false">交友</a>
+					<ul class="dropdown-menu" aria-labelledby="dropdown04">
+						<li><a class="dropdown-item" href="/FFF/FriendMate">開始配對</a></li>
+					</ul></li>
+				<li class="nav-item dropdown"><a
+					class="nav-link dropdown-toggle" href="#" id="dropdown04"
+					data-bs-toggle="dropdown" aria-expanded="false">商城</a>
+					<ul class="dropdown-menu" aria-labelledby="dropdown04">
+						<li><a class="dropdown-item" href="/FFF/Shop/index.jsp">商城首頁</a></li>
+                        <li><a class="dropdown-item" href="/FFF/Shop/shop5_explanation.jsp">購物說明</a></li>
+					</ul></li>
+				<li class="nav-item dropdown"><a
+					class="nav-link dropdown-toggle" href="#" id="dropdown04"
+					data-bs-toggle="dropdown" aria-expanded="false">揪團</a>
+					<ul class="dropdown-menu" aria-labelledby="dropdown04">
+						 <li><a class="dropdown-item" href="/FFF/group/groupsearch.jsp">參加揪團</a></li>
+	          <li><a class="dropdown-item" href="/FFF/group/groupagree.jsp">發起揪團</a></li> 
+	          <li><a class="dropdown-item" href="/FFF/group/groupofuser.jsp">我的揪團</a></li>
+					</ul>
+				<li class="nav-item dropdown"><a
+					class="nav-link dropdown-toggle" href="#" id="dropdown04"
+					data-bs-toggle="dropdown" aria-expanded="false">聊天室</a>
+					<ul class="dropdown-menu" aria-labelledby="dropdown04">
+						<li><a class="dropdown-item" href="/FFF/Chat/SingleChat.jsp">單人聊天室</a></li>
+						<li><a class="dropdown-item" href="/FFF/Chat/GroupChat.jsp">多人聊天室</a></li>
+					</ul></li>
+			</ul>
+			<div class="flex-shrink-0 dropdown islogin">
+				<a href="<%=request.getContextPath()%>/info/Login.jsp"
+					class="d-block link-light text-decoration-none" target="_blank">
+					登入/註冊 </a>
+			</div>
+		</div>
+	</div>
+</nav>

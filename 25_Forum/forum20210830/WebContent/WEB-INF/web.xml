@@ -41,7 +41,33 @@
  
  
  
- 
+<servlet>
+    <servlet-name>FirstPageIndexLoad3</servlet-name>
+    <servlet-class>com.forum.controller.FirstPageIndexLoad3</servlet-class>
+    </servlet>
+  <servlet-mapping>
+    <servlet-name>FirstPageIndexLoad3</servlet-name>
+    <url-pattern>/forum/FirstPageIndexLoad3</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>RetrieveLaunchImageServlet</servlet-name>
+    <servlet-class>com.forum.controller.RetrieveLaunchImageServlet</servlet-class>
+    </servlet>
+  <servlet-mapping>
+    <servlet-name>RetrieveLaunchImageServlet</servlet-name>
+    <url-pattern>/forum/RetrieveLaunchImageServlet</url-pattern>
+  </servlet-mapping>
+  
+  
+<servlet>
+    <servlet-name>ShowArticle</servlet-name>
+    <servlet-class>com.forum.controller.ShowArticle</servlet-class>
+    </servlet>
+  <servlet-mapping>
+    <servlet-name>ShowArticle</servlet-name>
+    <url-pattern>/forum/ShowArticle</url-pattern>
+  </servlet-mapping>
  
  
  

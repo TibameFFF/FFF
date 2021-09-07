@@ -264,7 +264,7 @@
 		</section>
 
 		<div class="plugins">
-			<a href="create_content.html"><i class="fas fa-comment-medical"></i></a>
+			<a href="create_content.jsp"><i class="fas fa-comment-medical"></i></a>
 		</div>
 
 		<footer>

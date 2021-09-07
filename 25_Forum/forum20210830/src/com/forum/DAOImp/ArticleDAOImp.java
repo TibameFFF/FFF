@@ -1,7 +1,6 @@
 package com.forum.DAOImp;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,33 +10,8 @@ import java.util.List;
 import com.fake.data.CommonConection;
 import com.forum.DAO.ArticleDAO;
 import com.forum.model.article;
-import com.forum.model.article_type;
 
 public class ArticleDAOImp implements ArticleDAO {
-
-	
-	private Connection getConnection() throws SQLException {
-		String serverName = "localhost";
-		String database = "Forum";
-		String url = "jdbc:mysql://" + serverName + "/" + database;
-		// 帳號和密碼
-		String user = "root";
-		String password = "password";
-		return DriverManager.getConnection(url, user, password);
-
-	}
-
-	private Connection getConnectionBycenter() throws SQLException {
-		
-		String serverName = "localhost:3306";
-		String database = "center";
-		// 帳號和密碼
-		String user = "root";
-		String password = "password";
-		String url = "jdbc:mysql://" + serverName + "/" + database+"?user="+user+"&password="+password+"&useUnicode=true&serverTimezone=Asia/Taipei&characterEncoding=gbk&autoReconnect=true&failOverReadOnly=true";
-		return DriverManager.getConnection(url);
-
-	}
 
 	private static final String INSERT_STMT = "INSERT INTO article (article_id,user_id,article_type,title,article_content,article_time,pageviews,article_num_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -50,24 +24,146 @@ public class ArticleDAOImp implements ArticleDAO {
 	private static final String DELETE = "DELETE FROM article where article_id = ?";
 	private static final String UPDATE = "UPDATE article set article_id=?, user_id=?, article_type_num=?, title=?, article_content=?, article_time=?, pageviews=?, article_num_count=?, article_status=? where article_id=?,";
 
-//	article_time
-	public List<article> getArticle_Time() {
-		List<article> list2 =  new ArrayList<article>();
-		article article2 = null;
+	
+	
+	public List<article> queryByArticleWhereArticle_Id (article model) {
+		List<article> articleList = new ArrayList<article>();
+		article article4 = null;
 		
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
+
+		try {
+			CommonConection commonConection = new CommonConection();
+			con = commonConection.getConnection();
+			pstmt = con.prepareStatement(
+					"select * from forum.article where article_id ="+ model.getArticle_id());
+					
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+
+				article4 = new article();
+				article4.setArticle_id(rs.getInt("article_id"));
+				article4.setUser_id(rs.getInt("user_id"));
+				article4.setArticle_type_num(rs.getInt("article_type_num"));
+				article4.setTitle(rs.getString("title"));
+				article4.setArticle_content(rs.getString("article_content"));
+				article4.setArticle_time(rs.getDate("article_time"));
+				article4.setPageviews(rs.getInt("pageviews"));
+				article4.setArticle_num_count(rs.getInt("article_num_count"));
+				article4.setArticle_status(rs.getString("article_status"));
+				articleList.add(article4);
+			}
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		return articleList;
+	}
+//   權限        集合         型別<>                方法名稱                           參數資料      名稱
+	public List<article> queryByarticleWhereArticleTypeNum(article model) {
+
+		List<article> list3 = new ArrayList<article>();
+		article article3 = null;
+
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			CommonConection commonConection = new CommonConection();
+			con = commonConection.getConnection();
+			pstmt = con.prepareStatement(
+//					"select * from forum.article where article_type_num = 3"
+					"select * from forum.article where article_type_num =" +  model.getArticle_type_num());
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+
+				article3 = new article();
+				article3.setArticle_id(rs.getInt("article_id"));
+				article3.setUser_id(rs.getInt("user_id"));
+				article3.setArticle_type_num(rs.getInt("article_type_num"));
+				article3.setTitle(rs.getString("title"));
+				article3.setArticle_content(rs.getString("article_content"));
+				article3.setArticle_time(rs.getDate("article_time"));
+				article3.setPageviews(rs.getInt("pageviews"));
+				article3.setArticle_num_count(rs.getInt("article_num_count"));
+				article3.setArticle_status(rs.getString("article_status"));
+				list3.add(article3);
+			}
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		return list3;
+	}
+
+//	article_time
+	public List<article> getArticle_Time() {
+		List<article> list2 = new ArrayList<article>();
+		article article2 = null;
+
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
 		try {
 			CommonConection commonConection = new CommonConection();
 			con = commonConection.getConnection();
 			pstmt = con.prepareStatement("select * from forum.article order by article_time desc limit 10 ");
 			rs = pstmt.executeQuery();
-			
+
 			while (rs.next()) {
-	
-				article2 = new article ();
+
+				article2 = new article();
 				article2.setArticle_id(rs.getInt("article_id"));
 				article2.setUser_id(rs.getInt("user_id"));
 				article2.setArticle_type_num(rs.getInt("article_type_num"));
@@ -78,56 +174,54 @@ public class ArticleDAOImp implements ArticleDAO {
 				article2.setArticle_num_count(rs.getInt("article_num_count"));
 				article2.setArticle_status(rs.getString("article_status"));
 				list2.add(article2);
-			}		
-			} catch (SQLException se) {
-				throw new RuntimeException("A database error occured. " + se.getMessage());
-				// Clean up JDBC resources
-			} finally {
-				if (rs != null) {
-					try {
-						rs.close();
-					} catch (SQLException se) {
-						se.printStackTrace(System.err);
-					}
-				}
-				if (pstmt != null) {
-					try {
-						pstmt.close();
-					} catch (SQLException se) {
-						se.printStackTrace(System.err);
-					}
-				}
-				if (con != null) {
-					try {
-						con.close();
-					} catch (Exception e) {
-						e.printStackTrace(System.err);
-					}
+			}
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
 				}
 			}
-			return list2;
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
 		}
-			
-			
-			
-	//	pageviews
+		return list2;
+	}
+
+	// pageviews
 	public List<article> getPageviews() {
-		List<article> list1 =  new ArrayList<article>();
+		List<article> list1 = new ArrayList<article>();
 		article article1 = null;
-		
+
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		
+
 		try {
 			CommonConection commonConection = new CommonConection();
 			con = commonConection.getConnection();
 			pstmt = con.prepareStatement("select * from forum.article order by pageviews desc limit 10 ");
 			rs = pstmt.executeQuery();
-			
+
 			while (rs.next()) {
-				
-				article1 = new article ();
+
+				article1 = new article();
 				article1.setArticle_id(rs.getInt("article_id"));
 				article1.setUser_id(rs.getInt("user_id"));
 				article1.setArticle_type_num(rs.getInt("article_type_num"));
@@ -138,38 +232,36 @@ public class ArticleDAOImp implements ArticleDAO {
 				article1.setArticle_num_count(rs.getInt("article_num_count"));
 				article1.setArticle_status(rs.getString("article_status"));
 				list1.add(article1);
-			}		
-			} catch (SQLException se) {
-				throw new RuntimeException("A database error occured. " + se.getMessage());
-				// Clean up JDBC resources
-			} finally {
-				if (rs != null) {
-					try {
-						rs.close();
-					} catch (SQLException se) {
-						se.printStackTrace(System.err);
-					}
-				}
-				if (pstmt != null) {
-					try {
-						pstmt.close();
-					} catch (SQLException se) {
-						se.printStackTrace(System.err);
-					}
-				}
-				if (con != null) {
-					try {
-						con.close();
-					} catch (Exception e) {
-						e.printStackTrace(System.err);
-					}
+			}
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
 				}
 			}
-			return list1;
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
 		}
-	
-	
-	
+		return list1;
+	}
+
 	@Override
 	public void insert(article article) {
 
@@ -177,7 +269,7 @@ public class ArticleDAOImp implements ArticleDAO {
 		PreparedStatement pstmt = null;
 
 		try {
-			CommonConection connect =new CommonConection();
+			CommonConection connect = new CommonConection();
 			con = connect.getConnection();
 			pstmt = con.prepareStatement(INSERT_STMT2);
 			pstmt.setInt(1, article.getUser_id());
@@ -479,10 +571,10 @@ public class ArticleDAOImp implements ArticleDAO {
 		try {
 			CommonConection connect = new CommonConection();
 			con = connect.getConnectionCenter();
-			pstmt = con.prepareStatement("select *from info where account = " + "'"+string+"'");
+			pstmt = con.prepareStatement("select *from info where account = " + "'" + string + "'");
 
 			rs = pstmt.executeQuery();
-			
+
 			while (rs.next()) {
 				userid = rs.getInt("user_id");
 			}
@@ -525,10 +617,10 @@ public class ArticleDAOImp implements ArticleDAO {
 		try {
 			CommonConection connect = new CommonConection();
 			con = connect.getConnection();
-			pstmt = con.prepareStatement("select *from article " );
+			pstmt = con.prepareStatement("select *from article ");
 
 			rs = pstmt.executeQuery();
-			article article=null;
+			article article = null;
 			while (rs.next()) {
 
 				article = new article();

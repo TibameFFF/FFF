@@ -2,6 +2,7 @@ package com.forum.DAOImp;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -16,25 +17,13 @@ import com.forum.model.article_picture;
 
 public class Article_PictureDAOImp implements Article_PictureDAO {
 
-	private Connection getConnection() throws SQLException {
-		String serverName = "localhost";
-		String database = "Forum";
-		String url = "jdbc:mysql://" + serverName + "/" + database;
-		// 帳號和密碼
-		String user = "root";
-		String password = "password";
-		return DriverManager.getConnection(url, user, password);
-
-	}
-
 	private static final String INSERT_STMT = "INSERT INTO article_picture (pic_id,article_id,image) VALUES (?, ?, ?)";
 
-	private static final String INSERT_STMT2 = 
-			"INSERT INTO article_picture " + "(" +
-			"article_id," + "image"
-			+ ")" 
-			+ "VALUES" 
-			+ "(?,?)";
+	private static final String INSERT_STMT2 = "INSERT INTO article_picture " + "(" + "article_id," + "image" + ")"
+			+ "VALUES" + "(?,?)";
+	
+	private static final String INSERT_STMT3 = "INSERT INTO article_picture " + "(" + "article_id," + "image" + ")"
+			+ "VALUES" + "(?,?)";
 
 	private static final String GET_ALL_STMT = "SELECT pic_id,article_id,image FROM article_picture order by pic_id";
 	private static final String GET_ONE_STMT = "SELECT pic_id,article_id,image FROM article_picture where pic_id = ?";
@@ -83,6 +72,44 @@ public class Article_PictureDAOImp implements Article_PictureDAO {
 
 	}
 
+	
+	public void insertReal(article_picture article_picture) {
+
+		Connection con = null;
+		PreparedStatement pstmt = null;
+
+		try {
+
+			CommonConection connect = new CommonConection();// ------>這排式連線
+			con = connect.getConnection();// ------>這排式連線
+
+			pstmt = con.prepareStatement(INSERT_STMT3);
+
+			pstmt.setInt(1, article_picture.getArticle_id());
+			pstmt.setBlob(2, article_picture.getImage());
+			pstmt.executeUpdate();
+		} catch (Exception se) {
+			se.getStackTrace();
+			System.out.println(se.getMessage());
+
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+
+	}
 	@Override
 	public void update(article_picture article_picture) {
 
@@ -157,6 +184,61 @@ public class Article_PictureDAOImp implements Article_PictureDAO {
 				}
 			}
 		}
+	}
+
+	public Blob queryByarticle_pictureImage(article_picture mold) {
+		Blob blob = null;
+
+		article_picture article_picture = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+
+			CommonConection commonConection = new CommonConection();
+			con = commonConection.getConnection();
+			pstmt = con.prepareStatement("select * from article_picture where article_id =" + mold.getArticle_id());
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+
+				article_picture = new article_picture();
+				article_picture.setPic_id(rs.getInt("pic_id"));
+				article_picture.setArticle_id(rs.getInt("article_id"));
+				article_picture.setImage(rs.getBlob("image"));
+			}
+			if (article_picture != null && article_picture.getImage() != null) {
+				blob = article_picture.getImage();
+			}
+
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+
+		return blob;
 	}
 
 	@Override
